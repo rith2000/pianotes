@@ -8,6 +8,7 @@ import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
+import MidiPlayer from './MidiPlayer';
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -108,7 +109,9 @@ class App extends React.Component {
         <h1 className="h3">react-piano recording + playback demo</h1>
         <div className="mt-5">
           <ScoreDisplay/>
-          Score
+        </div>
+        <div className="mt-5">
+          <MidiPlayer/>
         </div>
         <div className="mt-5">
           <SoundfontProvider
