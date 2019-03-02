@@ -1,46 +1,54 @@
 import React from 'react';
 import { Piano } from 'react-piano';
 
-const DURATION_UNIT = 0.2;
-const DEFAULT_NOTE_DURATION = DURATION_UNIT;
-
 class PianoWithRecording extends React.Component {
-  static defaultProps = {
-    notesRecorded: false,
-  };
-
   state = {
     keysDown: {},
-    noteDuration: DEFAULT_NOTE_DURATION,
+    notesRecorded: true,
+    noteStart: 0,
+    originTime: 0,
+    startFlag: true,
   };
 
   onPlayNoteInput = midiNumber => {
-    this.setState({
-      notesRecorded: false,
-    });
-  };
+    if (this.state.startFlag){
+       this.state.originTime = Date.now()/1000;
+       this.state.startFlag = false;
+    }
+    if (this.state.notesRecorded === true) {
+      this.setState({
+        notesRecorded: false,
+        noteStart: Date.now()/1000
+      });
+      console.log("onPlay");
+    }
+    };
 
-  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {
+  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
     if (this.state.notesRecorded === false) {
-      this.recordNotes(prevActiveNotes, this.state.noteDuration);
       this.setState({
         notesRecorded: true,
-        noteDuration: DEFAULT_NOTE_DURATION,
       });
+      console.log(Date.now()/1000-this.state.noteStart);
+      this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+      console.log("onStop");
     }
+
   };
 
-  recordNotes = (midiNumbers, duration) => {
+  recordNotes = (midiNumber, midiNumbers, duration) => {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
     const newEvents = midiNumbers.map(midiNumber => {
       return {
         midiNumber,
-        time: this.props.recording.currentTime,
+        time: Date.now()/1000 - this.state.originTime,
         duration: duration,
       };
     });
+    console.log (newEvents);
+
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents),
       currentTime: this.props.recording.currentTime + duration,
