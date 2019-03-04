@@ -1,7 +1,6 @@
 import React from 'react';
 import { Piano } from 'react-piano';
-global.startFlag = true;
-global.startRest = false;
+
 class PianoWithRecording extends React.Component {
   state = {
     keysDown: {},
