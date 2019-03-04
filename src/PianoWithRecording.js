@@ -1,21 +1,20 @@
 import React from 'react';
 import { Piano } from 'react-piano';
-global.startFlag = true;
-global.startRest = false;
+
 class PianoWithRecording extends React.Component {
   state = {
     keysDown: {},
     notesRecorded: true,
-    //restRecorded: false,
     noteStart: 0,
     originTime: 0,
-    //startFlag: true,
     restStart: 0,
   };
 
   onPlayNoteInput = midiNumber => {
     if (global.startFlag){
-       this.state.originTime = Date.now()/1000;
+      this.setState({
+        originTime: Date.now()/1000,
+      })
        global.startFlag = false;
     }
     if (this.state.notesRecorded === true) {
@@ -27,7 +26,6 @@ class PianoWithRecording extends React.Component {
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
-
     }
   };
 
@@ -37,12 +35,10 @@ class PianoWithRecording extends React.Component {
         notesRecorded: true,
         restStart: Date.now()/1000
       });
-      console.log(Date.now()/1000-this.state.noteStart);
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
       console.log("onStop");
       global.startRest =true;
     }
-
   };
 
   recordNotes = (midiNumber, midiNumbers, duration) => {
@@ -56,7 +52,8 @@ class PianoWithRecording extends React.Component {
           duration: duration,
         };
       });
-      console.log (newEvents);
+      this.updateNotes(newEvents);
+      console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents),
       currentTime: this.props.recording.currentTime + duration,
@@ -69,16 +66,25 @@ class PianoWithRecording extends React.Component {
     }
     const newEvents = 
        [{
-          midiNumber: 44,//change this to -1 or something later
+          midiNumber: -1,//change this to -1 or something later
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
         console.log (newEvents);
-    this.props.setRecording({
-      events: this.props.recording.events.concat(newEvents),
-      currentTime: this.props.recording.currentTime + duration,
-    });
+    // this.props.setRecording({
+    //   events: this.props.recording.events.concat(newEvents),
+    //   currentTime: this.props.recording.currentTime + duration,
+    // });
   };
+
+  updateNotes = (noteArray) =>{
+    if (noteArray[0].midiNumber === 48)
+    {
+      global.notes = global.notes + "c";
+    }
+    console.log (noteArray);
+    //later this will hold the converstion
+  }
 
   render() {
     const {

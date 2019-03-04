@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
 import 'react-piano/dist/styles.css';
-
+import './global.js'
 import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
@@ -103,6 +103,7 @@ class App extends React.Component {
     });
     global.startFlag = true;
     global.startRest = false;
+    global.notes=``;
   };
 
   render() {
