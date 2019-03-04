@@ -24,15 +24,12 @@ class PianoWithRecording extends React.Component {
         noteStart: Date.now()/1000
       });
       console.log("onPlay");
-    if (global.startRest){
-      this.recordRests(Date.now()/1000-this.state.restStart);
-    }
+      if (global.startRest){
+        this.recordRests(Date.now()/1000-this.state.restStart);
+      }
 
     }
-    // else{
-
-    // }
-    };
+  };
 
   onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
     if (this.state.notesRecorded === false) {
