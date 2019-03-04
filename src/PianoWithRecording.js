@@ -12,7 +12,9 @@ class PianoWithRecording extends React.Component {
 
   onPlayNoteInput = midiNumber => {
     if (global.startFlag){
-       this.state.originTime = Date.now()/1000;
+      this.setState({
+        originTime: Date.now()/1000,
+      })
        global.startFlag = false;
     }
     if (this.state.notesRecorded === true) {
@@ -64,19 +66,19 @@ class PianoWithRecording extends React.Component {
     }
     const newEvents = 
        [{
-          midiNumber: 44,//change this to -1 or something later
+          midiNumber: -1,//change this to -1 or something later
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
         console.log (newEvents);
-    this.props.setRecording({
-      events: this.props.recording.events.concat(newEvents),
-      currentTime: this.props.recording.currentTime + duration,
-    });
+    // this.props.setRecording({
+    //   events: this.props.recording.events.concat(newEvents),
+    //   currentTime: this.props.recording.currentTime + duration,
+    // });
   };
 
   updateNotes = (noteArray) =>{
-    if (noteArray[0].midiNumber == 48)
+    if (noteArray[0].midiNumber === 48)
     {
       global.notes = global.notes + "c";
     }
