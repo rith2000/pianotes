@@ -32,6 +32,7 @@ class App extends React.Component {
       currentTime: 0,
       currentEvents: [],
     },
+    notes: global.notes,
   };
 
   constructor(props) {
@@ -53,6 +54,7 @@ class App extends React.Component {
     this.setState({
       recording: Object.assign({}, this.state.recording, value),
     });
+    console.log("setRecording");
   };
 
   onClickPlay = () => {

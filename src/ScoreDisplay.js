@@ -1,10 +1,23 @@
 import React from 'react';
 import { Notation } from 'react-abc';
 
-//const notation = 'd3 _B =B_A =A2 _A2 _B=B G2 c ';
-import notation from './notation';
-export default () => (
-  <div>
-    <Notation notation={notation} />
-  </div>
-);
+class ScoreDisplay extends React.Component {
+  render() {
+    let notation = 
+		global.composer +
+		global.measure +
+		global.length +
+		global.metronome +
+		global.clef +
+		global.noteStart +
+		global.notes +
+		global.noteEnd;
+    return (
+     <div>
+    	<Notation notation={notation}/>
+  	</div>
+    );
+  }
+}
+
+export default ScoreDisplay;
