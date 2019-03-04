@@ -101,12 +101,14 @@ class App extends React.Component {
       currentEvents: [],
       currentTime: 0,
     });
+    global.startFlag = true;
+    global.startRest = false;
   };
 
   render() {
     return (
       <div>
-        <h1 className="h3">react-piano recording + playback demo</h1>
+        <h1 className="h3">Pianotes</h1>
         <div className="mt-5">
           <ScoreDisplay/>
         </div>
