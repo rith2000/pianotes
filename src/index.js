@@ -16,12 +16,12 @@ const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
 const noteRange = {
   first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('f4'),
+  last: MidiNumbers.fromNote('c5'),
 };
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: noteRange.first,
   lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.HOME_ROW,
+  keyboardConfig: KeyboardShortcuts.ALL_ROWS,
 });
 
 class App extends React.Component {
@@ -107,38 +107,60 @@ class App extends React.Component {
   };
 
   render() {
+    //fkjdsnfkjdsnfkdjs
     return (
       <div>
-        <h1 className="h3">Pianotes</h1>
+        <h1 className="h3"> <center> <font face="precious">Pianotes </font></center> </h1>
+         <p>
+          {" "}
+          <center>
+            {" "}
+            <font face="garamond">
+              {" "}
+              A web-app that translates piano playing into sheet music.{" "}
+            </font>{" "}
+          </center>{" "}
+        </p>
+         
         <div className="mt-5">
+
           <ScoreDisplay/>
+
         </div>
+        
         <div className="mt-5">
           <MidiPlayer/>
         </div>
+        <p> {" "}  </p>
         <div className="mt-5">
           <SoundfontProvider
             instrumentName="acoustic_grand_piano"
             audioContext={audioContext}
             hostname={soundfontHostname}
             render={({ isLoading, playNote, stopNote }) => (
+            <center>
               <PianoWithRecording
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={300}
+                width={1200}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
               />
+            </center>
             )}
           />
         </div>
+        <p> {" "}  </p>
         <div className="mt-5">
+         <center>
           <button onClick={this.onClickPlay}>Play</button>
+          
           <button onClick={this.onClickStop}>Stop</button>
           <button onClick={this.onClickClear}>Clear</button>
+         </center>
         </div>
         <div className="mt-5">
           <strong>Recorded notes</strong>

@@ -1,4 +1,4 @@
-import React from 'react';
+import  React  from 'react';
 import { Piano } from 'react-piano';
 
 class PianoWithRecording extends React.Component {
@@ -78,10 +78,54 @@ class PianoWithRecording extends React.Component {
   };
 
   updateNotes = (noteArray) =>{
-    if (noteArray[0].midiNumber === 48)
-    {
-      global.notes = global.notes + "c";
-    }
+    
+    var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
+    var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
+
+    //var midiNote = midiOctave % 12;
+    var letterKey = "";
+
+    if (midiNote == 0) 
+      letterKey = "C";
+    else if (midiNote == 1)
+      letterKey = "_D";
+    else if (midiNote == 2)
+      letterKey = "D";
+    else if (midiNote == 3)
+      letterKey = "_E";
+    else if (midiNote == 4)
+      letterKey = "E";
+    else if (midiNote == 5)
+      letterKey = "F";
+    else if (midiNote == 6)
+      letterKey = "_G";
+    else if (midiNote == 7)
+      letterKey = "G";
+    else if (midiNote == 8)
+      letterKey = "_A";
+    else if (midiNote == 9)
+      letterKey = "A";
+    else if (midiNote == 10)
+      letterKey = "_B";
+    else if (midiNote == 11)
+      letterKey = "B";
+
+    //console.log(duration);
+    var dur = this.state.restStart - this.state.noteStart;
+    console.log(dur);
+    var letterDur = "";
+
+    // dur = Math.trunc(dur)/60 * 100;
+    // letterDur = (dur).toString();
+    //prob w first note bc origin time
+
+    //debug("hi");
+    if (midiOctave == 4) 
+      global.notes = global.notes + letterKey;
+     else 
+      global.notes = global.notes + letterKey.toLowerCase();
+    
+
     console.log (noteArray);
     //later this will hold the converstion
   }

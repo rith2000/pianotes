@@ -1,10 +1,10 @@
 global.startFlag = true;
 global.startRest = false;
-global.composer = `C: Pianotes
+global.composer = `C: 
 `;
 global.measure = `M: 4/4
 `;
-global.length = `L: 1/8
+global.length = `L: 1/16
 `;
 global.metronome = `Q:1/4=88
 `;
