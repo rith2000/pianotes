@@ -109,22 +109,16 @@ class PianoWithRecording extends React.Component {
       letterKey = "_B";
     else if (midiNote == 11)
       letterKey = "B";
-
-    //console.log(duration);
-    var dur = this.state.restStart - this.state.noteStart;
-    console.log(dur);
-    var letterDur = "";
-
-    // dur = Math.trunc(dur)/60 * 100;
-    // letterDur = (dur).toString();
-    //prob w first note bc origin time
+  
+  	var dur = Math.round(noteArray[0].duration*16)
+	var s= dur.toString();
 
     //debug("hi");
-    if (midiOctave == 4) 
-      global.notes = global.notes + letterKey;
+    if (midiOctave == 4)
+      global.notes = global.notes + letterKey + s;
      else 
       global.notes = global.notes + letterKey.toLowerCase();
-    
+	// make you rchanges below this line
 
     console.log (noteArray);
     //later this will hold the converstion

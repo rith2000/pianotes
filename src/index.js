@@ -21,7 +21,7 @@ const noteRange = {
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: noteRange.first,
   lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.ALL_ROWS,
+  keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
 
 class App extends React.Component {

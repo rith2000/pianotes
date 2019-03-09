@@ -6,7 +6,7 @@ global.measure = `M: 4/4
 `;
 global.length = `L: 1/16
 `;
-global.metronome = `Q:1/4=88
+global.metronome = `Q:1/4=120
 `;
 global.clef = `V: V1 clef=treble
 `;
