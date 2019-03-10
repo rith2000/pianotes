@@ -104,6 +104,7 @@ class App extends React.Component {
     global.startFlag = true;
     global.startRest = false;
     global.notes=``;
+	global.beat_count = 0;
   };
 
   render() {

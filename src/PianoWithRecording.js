@@ -8,6 +8,9 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
+	clip_factor: 1.25,
+	clip_rest: 0.5,
+	beat_count: 0,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -22,7 +25,6 @@ class PianoWithRecording extends React.Component {
         notesRecorded: false,
         noteStart: Date.now()/1000
       });
-      console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
@@ -36,7 +38,6 @@ class PianoWithRecording extends React.Component {
         restStart: Date.now()/1000
       });
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
-      console.log("onStop");
       global.startRest =true;
     }
   };
@@ -70,21 +71,39 @@ class PianoWithRecording extends React.Component {
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
-        console.log (newEvents);
+		this.updateNotes(newEvents);
     // this.props.setRecording({
     //   events: this.props.recording.events.concat(newEvents),
     //   currentTime: this.props.recording.currentTime + duration,
     // });
   };
 
+  
   updateNotes = (noteArray) =>{
     
+	this.state.clip_factor = 1.25;
+	
+	var metro = global.metronome;
+	var pos = metro.lastIndexOf("=");
+	metro = parseInt(metro.substring(pos+1, metro.length-1));
+	metro /= 15;
+	
+	var dur = Math.round(noteArray[0].duration*metro*this.state.clip_factor);
+	var durRest = Math.round(noteArray[0].duration*metro*this.state.clip_rest);
+	
+	var letterKey = "";
+	if((noteArray[0].midiNumber == -1) && (durRest != 0))
+	{
+		letterKey="z";
+		dur = durRest;
+	}
+	
     var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
-
+	
     //var midiNote = midiOctave % 12;
-    var letterKey = "";
 
+	
     if (midiNote == 0) 
       letterKey = "C";
     else if (midiNote == 1)
@@ -110,18 +129,33 @@ class PianoWithRecording extends React.Component {
     else if (midiNote == 11)
       letterKey = "B";
   
-  	var dur = Math.round(noteArray[0].duration*16)
+	if(dur == 0)
+	{
+		dur = 1;
+	}
+	
+	global.beat_count += dur;
 	var s= dur.toString();
-
-    //debug("hi");
+	if(letterKey == "")
+		s = "";
+	
     if (midiOctave == 4)
       global.notes = global.notes + letterKey + s;
      else 
-      global.notes = global.notes + letterKey.toLowerCase();
-	// make you rchanges below this line
+      global.notes = global.notes + letterKey.toLowerCase() + s;
 
+	if(global.beat_count >= 16)
+	{
+		global.notes = global.notes + "|";
+		global.beat_count = 0;
+	}
+	if(global.beat_count % 4 == 0)
+		global.notes = global.notes + " ";
+	
+	if(noteArray == [])
+		global.beat_count = 0;
+	
     console.log (noteArray);
-    //later this will hold the converstion
   }
 
   render() {
