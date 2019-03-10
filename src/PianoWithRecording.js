@@ -53,7 +53,6 @@ class PianoWithRecording extends React.Component {
         };
       });
       this.updateNotes(newEvents);
-      console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents),
       currentTime: this.props.recording.currentTime + duration,
@@ -148,14 +147,19 @@ class PianoWithRecording extends React.Component {
 	{
 		global.notes = global.notes + "|";
 		global.beat_count = 0;
+		global.measure_num += 1;
 	}
+	if(global.measure_num >= 2)
+	{
+		global.notes = global.notes + "\n";
+		global.measure_num = 0;
+	}
+	console.log(global.measure_num);
 	if(global.beat_count % 4 == 0)
 		global.notes = global.notes + " ";
 	
 	if(noteArray == [])
 		global.beat_count = 0;
-	
-    console.log (global.beat_count);
   }
 
   render() {

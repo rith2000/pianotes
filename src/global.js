@@ -18,6 +18,7 @@ global.notes = ``;
 global.noteEnd = ` |]
 `;
 
+global.measure_num = 0;
 
 
 global.notation = 
