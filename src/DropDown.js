@@ -1,4 +1,5 @@
 import React from 'react';
+import './global.js';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 export default class Menu extends React.Component {
@@ -8,8 +9,6 @@ export default class Menu extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       dropdownOpen: false,
-      timesignature: '4/4',
-      defaultnotelength: '1/4'
     };
   }
 
@@ -19,20 +18,16 @@ export default class Menu extends React.Component {
     }));
   }
   onClick44 = () => {
-  	this.setState({timesignature: '4/4'});
-  	this.setState({defaultnotelength: '1/4'});
+  	global.measure = 'M: 4/4';
   }
   onClick34 = () => {
-  	this.setState({timesignature: '3/4'});
-  	this.setState({defaultnotelength: '1/4'});
+  	global.measure = 'M: 3/4';
   }
   onClick24 = () => {
-  	this.setState({timesignature: '2/4'});
-  	this.setState({defaultnotelength: '1/4'});
+  	global.measure = 'M: 2/4';
   }
   onClick68 = () => {
-  	this.setState({timesignature: '6/8'});
-  	this.setState({defaultnotelength: '1/8'});
+  	global.measure =  'M: 6/8';
   }
   render() {
     return (

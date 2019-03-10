@@ -1,7 +1,3 @@
-window.executeMetro = function() {
-
-var click1 = new Audio(tock); //
-var click2 = new Audio(tick); //
 var audioContext = null;
 var unlocked = false;
 var isPlaying = false;      // Are we currently playing?
@@ -40,7 +36,8 @@ function nextNote() {
     // Advance current note and time by a 16th note...
     var secondsPerBeat = 60.0 / tempo;    // Notice this picks up the CURRENT 
                                           // tempo value to calculate beat length.
-    nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
+                                          // Add beat length to last beat time
+    nextNoteTime += 0.25 * secondsPerBeat;
 
     current16thNote++;    // Advance the beat number, wrap to zero
     if (current16thNote == 16) {
@@ -168,7 +165,7 @@ function init(){
 
     timerWorker.onmessage = function(e) {
         if (e.data == "tick") {
-            console.log("tick!");
+            // console.log("tick!");
             scheduler();
         }
         else
@@ -178,6 +175,4 @@ function init(){
 }
 
 window.addEventListener("load", init );
-
-}
 

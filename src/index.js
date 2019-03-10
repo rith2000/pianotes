@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
 import 'react-piano/dist/styles.css';
-
+import './global.js'
 import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
 import MidiPlayer from './MidiPlayer';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import DropDown from './DropDown.js';
+import Metronome from './Metronome1.js';
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -101,12 +104,15 @@ class App extends React.Component {
       currentEvents: [],
       currentTime: 0,
     });
+    global.startFlag = true;
+    global.startRest = false;
+    global.notes=``;
   };
 
   render() {
     return (
       <div>
-        <h1 className="h3">react-piano recording + playback demo</h1>
+        <h1 className="h3">Pianotes</h1>
         <div className="mt-5">
           <ScoreDisplay/>
         </div>
@@ -114,6 +120,8 @@ class App extends React.Component {
           <MidiPlayer/>
         </div>
         <div className="mt-5">
+        <DimensionsProvider>
+      {({ containerWidth, containerHeight }) => (
           <SoundfontProvider
             instrumentName="acoustic_grand_piano"
             audioContext={audioContext}
@@ -123,7 +131,7 @@ class App extends React.Component {
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={300}
+                width={containerWidth * 0.8}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
@@ -131,11 +139,15 @@ class App extends React.Component {
               />
             )}
           />
+          )}
+          </DimensionsProvider>
         </div>
         <div className="mt-5">
           <button onClick={this.onClickPlay}>Play</button>
           <button onClick={this.onClickStop}>Stop</button>
           <button onClick={this.onClickClear}>Clear</button>
+          <DropDown></DropDown>
+          <Metronome></Metronome>
         </div>
         <div className="mt-5">
           <strong>Recorded notes</strong>
