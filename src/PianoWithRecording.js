@@ -9,8 +9,7 @@ class PianoWithRecording extends React.Component {
     originTime: 0,
     restStart: 0,
 	clip_factor: 1.25,
-	clip_rest: 0.5,
-	beat_count: 0,
+	clip_rest: .65,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -102,7 +101,6 @@ class PianoWithRecording extends React.Component {
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
 	
     //var midiNote = midiOctave % 12;
-
 	
     if (midiNote == 0) 
       letterKey = "C";
@@ -134,10 +132,12 @@ class PianoWithRecording extends React.Component {
 		dur = 1;
 	}
 	
-	global.beat_count += dur;
 	var s= dur.toString();
+	
 	if(letterKey == "")
 		s = "";
+	else 
+		global.beat_count += dur;
 	
     if (midiOctave == 4)
       global.notes = global.notes + letterKey + s;
@@ -155,7 +155,7 @@ class PianoWithRecording extends React.Component {
 	if(noteArray == [])
 		global.beat_count = 0;
 	
-    console.log (noteArray);
+    console.log (global.beat_count);
   }
 
   render() {
