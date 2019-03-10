@@ -8,8 +8,9 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
-	clip_factor: 1.25,
-	clip_rest: .65,
+	 clip_factor: 1.25,
+	 clip_rest: .65,
+
   };
 
   onPlayNoteInput = midiNumber => {
@@ -24,6 +25,8 @@ class PianoWithRecording extends React.Component {
         notesRecorded: false,
         noteStart: Date.now()/1000
       });
+
+      console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
@@ -37,6 +40,8 @@ class PianoWithRecording extends React.Component {
         restStart: Date.now()/1000
       });
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+
+      console.log("onStop");
       global.startRest =true;
     }
   };
@@ -53,6 +58,7 @@ class PianoWithRecording extends React.Component {
         };
       });
       this.updateNotes(newEvents);
+      console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents),
       currentTime: this.props.recording.currentTime + duration,
@@ -69,7 +75,9 @@ class PianoWithRecording extends React.Component {
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
+
 		this.updateNotes(newEvents);
+        console.log (newEvents);
     // this.props.setRecording({
     //   events: this.props.recording.events.concat(newEvents),
     //   currentTime: this.props.recording.currentTime + duration,
@@ -160,6 +168,7 @@ class PianoWithRecording extends React.Component {
 	
 	if(noteArray == [])
 		global.beat_count = 0;
+
   }
 
   render() {

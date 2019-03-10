@@ -13,6 +13,7 @@ global.clef = `V: V1 clef=treble
 
 global.beat_count = 0;
 
+
 global.noteStart = `[V: V1] `;
 global.notes = ``;
 global.noteEnd = ` |]

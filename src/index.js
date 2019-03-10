@@ -9,6 +9,9 @@ import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
 import MidiPlayer from './MidiPlayer';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import DropDown from './DropDown.js';
+import Slider from './Slider.js';
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -105,12 +108,14 @@ class App extends React.Component {
     global.startRest = false;
     global.notes=``;
 	global.beat_count = 0;
+
   };
 
   render() {
     //fkjdsnfkjdsnfkdjs
     return (
       <div>
+       <p> {" "}  </p>
         <h1 className="h3"> <center> <font face="precious">Pianotes </font></center> </h1>
          <p>
           {" "}
@@ -123,17 +128,12 @@ class App extends React.Component {
           </center>{" "}
         </p>
          
-        <div className="mt-5">
-
-          <ScoreDisplay/>
-
-        </div>
         
-        <div className="mt-5">
-          <MidiPlayer/>
-        </div>
+        
         <p> {" "}  </p>
         <div className="mt-5">
+        <DimensionsProvider>
+      {({ containerWidth, containerHeight }) => (
           <SoundfontProvider
             instrumentName="acoustic_grand_piano"
             audioContext={audioContext}
@@ -144,7 +144,7 @@ class App extends React.Component {
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={1200}
+                width={containerWidth * 0.8}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
@@ -153,16 +153,36 @@ class App extends React.Component {
             </center>
             )}
           />
+          )}
+          </DimensionsProvider>
         </div>
         <p> {" "}  </p>
+        <center>
+         <p> {" "}  </p>
+          <div>
+            <DropDown></DropDown>
+            <Slider></Slider>
+          </div>
+        
         <div className="mt-5">
-         <center>
+         
           <button onClick={this.onClickPlay}>Play</button>
           
           <button onClick={this.onClickStop}>Stop</button>
           <button onClick={this.onClickClear}>Clear</button>
-         </center>
+         </div>
+
+         
+
+          
+          </center>
+
+        <div className="mt-5">
+
+          <ScoreDisplay/>
+
         </div>
+        
         <div className="mt-5">
           <strong>Recorded notes</strong>
           <div>{JSON.stringify(this.state.recording.events)}</div>
