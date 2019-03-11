@@ -12,7 +12,7 @@ import ScoreDisplay from './ScoreDisplay';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
 import Slider from './Slider.js';
-
+import './Metronome.css';
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -160,16 +160,17 @@ class App extends React.Component {
         <center>
          <p> {" "}  </p>
           <div>
-            <DropDown></DropDown>
+         
             <Slider></Slider>
           </div>
         
         <div className="mt-5">
          
-          <button onClick={this.onClickPlay}>Play</button>
-          
-          <button onClick={this.onClickStop}>Stop</button>
-          <button onClick={this.onClickClear}>Clear</button>
+          <button className="btn" onClick={this.onClickPlay}>Play</button>
+
+          <button className="btn" onClick={this.onClickStop}>Stop</button>
+          <button className="btn" onClick={this.onClickClear}>Clear</button>
+	  <DropDown></DropDown>
          </div>
 
          
