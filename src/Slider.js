@@ -12,7 +12,8 @@ class Slider extends Component {
 	handleBpmChange = event => {
 		const bpm = event.target.value;
 		this.setState({bpm});
-		global.metronome = 'Q:1/4=' + bpm; 
+		global.metronome = `Q:1/4=` + bpm.toString(); 
+		console.log(global.metronome);
 	}
 	render() {
 		return <div className = "metronome"> 

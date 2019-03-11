@@ -19,7 +19,7 @@ const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
 const noteRange = {
   first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('c5'),
+  last: MidiNumbers.fromNote('c4'),
 };
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: noteRange.first,
@@ -144,7 +144,7 @@ class App extends React.Component {
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={containerWidth * 0.8}
+                width={containerWidth * 0.5}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
@@ -177,11 +177,13 @@ class App extends React.Component {
           
           </center>
 
+          <center>
         <div className="mt-5">
 
           <ScoreDisplay/>
 
         </div>
+          </center>
         
         <div className="mt-5">
           <strong>Recorded notes</strong>

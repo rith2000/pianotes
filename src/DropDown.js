@@ -18,17 +18,24 @@ export default class Menu extends React.Component {
     }));
   }
   onClick44 = () => {
-  	global.measure = 'M: 4/4';
+  	global.measure = `M: 4/4
+    `;
+
   }
   onClick34 = () => {
-  	global.measure = 'M: 3/4';
+  	global.measure = `M: 3/4
+    `;
+    console.log(global.measure);
   }
   onClick24 = () => {
-  	global.measure = 'M: 2/4';
+  	global.measure = `M: 2/4
+    `;
   }
   onClick68 = () => {
-  	global.measure =  'M: 6/8';
+  	global.measure =  `M: 6/8
+    `;
   }
+
   render() {
     return (
       <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
