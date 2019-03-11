@@ -8,10 +8,11 @@ import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
-import MidiPlayer from './MidiPlayer';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
 import Slider from './Slider.js';
+
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -112,7 +113,6 @@ class App extends React.Component {
   };
 
   render() {
-    //fkjdsnfkjdsnfkdjs
     return (
       <div>
        <p> {" "}  </p>
@@ -129,7 +129,7 @@ class App extends React.Component {
         </p>
          
         
-        
+
         <p> {" "}  </p>
         <div className="mt-5">
         <DimensionsProvider>
