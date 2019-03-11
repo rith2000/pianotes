@@ -8,7 +8,6 @@ import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
-import MidiPlayer from './MidiPlayer';
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -108,7 +107,6 @@ class App extends React.Component {
   };
 
   render() {
-    //fkjdsnfkjdsnfkdjs
     return (
       <div>
         <h1 className="h3"> <center> <font face="precious">Pianotes </font></center> </h1>
@@ -129,9 +127,6 @@ class App extends React.Component {
 
         </div>
         
-        <div className="mt-5">
-          <MidiPlayer/>
-        </div>
         <p> {" "}  </p>
         <div className="mt-5">
           <SoundfontProvider
