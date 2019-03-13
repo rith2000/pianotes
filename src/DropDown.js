@@ -46,7 +46,6 @@ export default class Menu extends React.Component {
           <DropdownItem onClick = {this.onClick44}>4/4</DropdownItem>
           <DropdownItem onClick = {this.onClick34}>3/4</DropdownItem>
           <DropdownItem onClick = {this.onClick24}>2/4</DropdownItem>
-          <DropdownItem onClick = {this.onClick68}>6/8</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     );
