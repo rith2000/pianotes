@@ -115,16 +115,17 @@ class App extends React.Component {
   render() {
     return (
       <div>
+
        <p> {" "}  </p>
-        <h1 className="h3"> <center> <font face="precious">Pianotes </font></center> </h1>
+        <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
          <p>
           {" "}
           <center>
             {" "}
-            <font face="garamond">
+            <font face="garamond"><font size="5">
               {" "}
               A web-app that translates piano playing into sheet music.{" "}
-            </font>{" "}
+            </font></font>{" "}
           </center>{" "}
         </p>
          
@@ -144,7 +145,7 @@ class App extends React.Component {
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={containerWidth * 0.5}
+                width={containerWidth * 0.4}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
@@ -166,11 +167,12 @@ class App extends React.Component {
         
         <div className="mt-5">
          
-          <button className="btn" onClick={this.onClickPlay}>Play</button>
+          <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
 
-          <button className="btn" onClick={this.onClickStop}>Stop</button>
-          <button className="btn" onClick={this.onClickClear}>Clear</button>
-	  <DropDown></DropDown>
+
+          <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
+          <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
+	       <DropDown></DropDown>
          </div>
 
          
@@ -186,10 +188,7 @@ class App extends React.Component {
         </div>
           </center>
         
-        <div className="mt-5">
-          <strong>Recorded notes</strong>
-          <div>{JSON.stringify(this.state.recording.events)}</div>
-        </div>
+        
       </div>
     );
   }

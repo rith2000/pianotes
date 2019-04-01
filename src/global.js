@@ -2,7 +2,7 @@ global.startFlag = true;
 global.startRest = false;
 global.composer = `C: 
 `;
-global.measure = `M: 3/4
+global.measure = `M: 4/4
 `;
 global.length = `L: 1/16
 `;
