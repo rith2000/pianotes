@@ -8,10 +8,12 @@ import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 import PianoWithRecording from './PianoWithRecording';
 import ScoreDisplay from './ScoreDisplay';
-import MidiPlayer from './MidiPlayer';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
-import Metronome from './Metronome1.js';
+import Metronome from './Metronome.js';
+import './Metronome.css';
+
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -19,7 +21,7 @@ const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
 const noteRange = {
   first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('f4'),
+  last: MidiNumbers.fromNote('c4'),
 };
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: noteRange.first,
@@ -107,18 +109,29 @@ class App extends React.Component {
     global.startFlag = true;
     global.startRest = false;
     global.notes=``;
+    global.beat_count = 0;
+
   };
 
   render() {
     return (
       <div>
-        <h1 className="h3">Pianotes</h1>
-        <div className="mt-5">
-          <ScoreDisplay/>
-        </div>
-        <div className="mt-5">
-          <MidiPlayer/>
-        </div>
+       <p> {" "}  </p>
+        <h1 className="h3"> <center> <font face="precious">Pianotes </font></center> </h1>
+         <p>
+          {" "}
+          <center>
+            {" "}
+            <font face="garamond">
+              {" "}
+              A web-app that translates piano playing into sheet music.{" "}
+            </font>{" "}
+          </center>{" "}
+        </p>
+         
+        
+
+        <p> {" "}  </p>
         <div className="mt-5">
         <DimensionsProvider>
       {({ containerWidth, containerHeight }) => (
@@ -127,28 +140,44 @@ class App extends React.Component {
             audioContext={audioContext}
             hostname={soundfontHostname}
             render={({ isLoading, playNote, stopNote }) => (
+            <center>
               <PianoWithRecording
                 recording={this.state.recording}
                 setRecording={this.setRecording}
                 noteRange={noteRange}
-                width={containerWidth * 0.8}
+                width={containerWidth * 0.5}
                 playNote={playNote}
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
               />
+            </center>
             )}
           />
           )}
           </DimensionsProvider>
         </div>
+        <p> {" "}  </p>
+        <center>
+         <p> {" "}  </p>
+        
         <div className="mt-5">
-          <button onClick={this.onClickPlay}>Play</button>
-          <button onClick={this.onClickStop}>Stop</button>
-          <button onClick={this.onClickClear}>Clear</button>
+          <button className="btn" onClick={this.onClickPlay}>Play</button> 
+          <button className="btn" onClick={this.onClickStop}>Stop</button>
+          <button className="btn"onClick={this.onClickClear}>Clear</button>
           <DropDown></DropDown>
           <Metronome></Metronome>
+         </div>
+          </center>
+
+          <center>
+        <div className="mt-5">
+
+          <ScoreDisplay/>
+
         </div>
+          </center>
+        
         <div className="mt-5">
           <strong>Recorded notes</strong>
           <div>{JSON.stringify(this.state.recording.events)}</div>
