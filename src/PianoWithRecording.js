@@ -185,14 +185,22 @@ class PianoWithRecording extends React.Component {
   
 	if(global.beat_count > (16/beat_per_measure))
 	{
-		var rem = global.beat_count - (16/beat_per_measure);
-		var balanceLeft = dur - rem;
-		if(midiOctave ==4)
-			global.notes += "(" + letterKey + balanceLeft.toString() + "|" + letterKey + rem.toString() + ")";
-		else
-			global.notes += "(" + letterKey.toLowerCase() + balanceLeft.toString() + "|" + letterKey.toLowerCase() + rem.toString() + ")";
-		global.beat_count = 0;
-		global.measure_num += 1;
+  		var rem = global.beat_count%(16/beat_per_measure);
+  		var measures = global.beat_count/(32/beat_per_measure);
+      let keyToAdd;
+      if(midiOctave == 4)
+        keyToAdd = letterKey
+      else
+        keyToAdd = letterKey.toLowerCase();   
+
+      global.notes += "(";
+      
+      for(let i = 0; i < measures; i++){
+  		  global.notes += letterKey + (16/beat_per_measure).toString() + "|"
+  		}
+      global.notes += letterKey + rem.toString() + ")";
+      global.beat_count = 0;
+      global.measure_num += measures;
 	}
 	else if (midiOctave == 4)
       global.notes = global.notes + letterKey + s;
