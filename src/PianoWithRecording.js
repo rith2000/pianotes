@@ -8,8 +8,9 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
-	clip_factor: 1.25,
-	clip_rest: .65,
+	 clip_factor: 1.25,
+	 clip_rest: 1.00,
+
   };
 
   onPlayNoteInput = midiNumber => {
@@ -24,6 +25,8 @@ class PianoWithRecording extends React.Component {
         notesRecorded: false,
         noteStart: Date.now()/1000
       });
+
+      console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
@@ -37,6 +40,8 @@ class PianoWithRecording extends React.Component {
         restStart: Date.now()/1000
       });
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+
+      console.log("onStop");
       global.startRest =true;
     }
   };
@@ -45,6 +50,17 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
+
+    // var metro = global.metronome;
+    // var pos = metro.lastIndexOf("=");
+    // metro = parseInt(metro.substring(pos+1, metro.length-1));
+    // metro /= 15;
+
+    // duration = Math.round(duration*metro)*0.125;
+    //  if (duration == 0) {
+    //   duration = .125;
+    // }
+
     const newEvents = midiNumbers.map(midiNumber => {
         return {
           midiNumber,
@@ -53,6 +69,7 @@ class PianoWithRecording extends React.Component {
         };
       });
       this.updateNotes(newEvents);
+      console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents),
       currentTime: this.props.recording.currentTime + duration,
@@ -63,17 +80,32 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
+    // var metro = global.metronome;
+    // var pos = metro.lastIndexOf("=");
+    // metro = parseInt(metro.substring(pos+1, metro.length-1));
+    // metro /= 15;
+
+    // duration = Math.round(duration*metro)*0.125;
+
+
     const newEvents = 
        [{
           midiNumber: -1,//change this to -1 or something later
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
+
+  if (duration > 0.5) {
 		this.updateNotes(newEvents);
+
+  }
+        console.log(duration);
+        console.log (newEvents);
     // this.props.setRecording({
     //   events: this.props.recording.events.concat(newEvents),
     //   currentTime: this.props.recording.currentTime + duration,
     // });
+
   };
 
   
@@ -86,21 +118,31 @@ class PianoWithRecording extends React.Component {
 	metro = parseInt(metro.substring(pos+1, metro.length-1));
 	metro /= 15;
 	
+	var beat_per_measure = global.measure;
+	var pos2 = beat_per_measure.lastIndexOf(":");
+	beat_per_measure = parseInt(beat_per_measure.substring(3,4));
+	beat_per_measure = 4/beat_per_measure;
+	
 	var dur = Math.round(noteArray[0].duration*metro*this.state.clip_factor);
+  // var dur = Math.round(noteArray[0].duration*this.state.clip_factor/0.125);
+  // var durRest = Math.round(noteArray[0].duration*this.state.clip_rest/0.125);
 	var durRest = Math.round(noteArray[0].duration*metro*this.state.clip_rest);
 	
 	var letterKey = "";
-	if((noteArray[0].midiNumber == -1) && (durRest != 0))
+	if(noteArray[0].midiNumber == -1)
 	{
-		letterKey="z";
-		dur = durRest;
+
+		if (durRest != 0) {
+		  letterKey +="z";
+		  dur = durRest;
+		}	
+
 	}
 	
     var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
 	
-    //var midiNote = midiOctave % 12;
-	
+
     if (midiNote == 0) 
       letterKey = "C";
     else if (midiNote == 1)
@@ -130,36 +172,51 @@ class PianoWithRecording extends React.Component {
 	{
 		dur = 1;
 	}
-	
+
+
 	var s= dur.toString();
 	
-	if(letterKey == "")
+	if(letterKey == "" || letterKey == "]")
 		s = "";
 	else 
 		global.beat_count += dur;
 	
-    if (midiOctave == 4)
+	console.log("beat count: " + global.beat_count);
+  
+	if(global.beat_count > (16/beat_per_measure))
+	{
+		var rem = global.beat_count - (16/beat_per_measure);
+		var balanceLeft = dur - rem;
+		if(midiOctave ==4)
+			global.notes += "(" + letterKey + balanceLeft.toString() + "|" + letterKey + rem.toString() + ")";
+		else
+			global.notes += "(" + letterKey.toLowerCase() + balanceLeft.toString() + "|" + letterKey.toLowerCase() + rem.toString() + ")";
+		global.beat_count = 0;
+		global.measure_num += 1;
+	}
+	else if (midiOctave == 4)
       global.notes = global.notes + letterKey + s;
      else 
       global.notes = global.notes + letterKey.toLowerCase() + s;
-
-	if(global.beat_count >= 16)
+  
+	if(global.beat_count == (16/beat_per_measure))
 	{
 		global.notes = global.notes + "|";
 		global.beat_count = 0;
 		global.measure_num += 1;
 	}
+
 	if(global.measure_num >= 2)
 	{
 		global.notes = global.notes + "\n";
 		global.measure_num = 0;
 	}
-	console.log(global.measure_num);
 	if(global.beat_count % 4 == 0)
 		global.notes = global.notes + " ";
 	
 	if(noteArray == [])
 		global.beat_count = 0;
+
   }
 
   render() {
