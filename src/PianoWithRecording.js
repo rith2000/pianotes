@@ -10,13 +10,12 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
 	 clip_factor: 1.25,
 	 clip_rest: 1.00,
-
   };
 
   onPlayNoteInput = midiNumber => {
     if (global.startFlag){
       this.setState({
-        originTime: Date.now()/1000,
+        originTime: Date.now()/1000, //needed?
       })
        global.startFlag = false;
     }
@@ -25,7 +24,6 @@ class PianoWithRecording extends React.Component {
         notesRecorded: false,
         noteStart: Date.now()/1000
       });
-
       console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
@@ -61,17 +59,17 @@ class PianoWithRecording extends React.Component {
     //   duration = .125;
     // }
 
-    const newEvents = midiNumbers.map(midiNumber => {
-        return {
-          midiNumber,
-          time: Date.now()/1000 - this.state.originTime,
-          duration: duration,
-        };
-      });
-      this.updateNotes(newEvents);
-      console.log(global.notes);
+    const newEvents = midiNumbers.map(midiNumber => { //array?
+      return {
+        midiNumber,
+        time: Date.now()/1000 - this.state.originTime, //needed?
+        duration: duration,
+      };
+    });
+    this.updateNotes(newEvents);
+    console.log(global.notes);
     this.props.setRecording({
-      events: this.props.recording.events.concat(newEvents),
+      events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
     });
   };
@@ -110,35 +108,40 @@ class PianoWithRecording extends React.Component {
 
   
   updateNotes = (noteArray) =>{
-    
-	this.state.clip_factor = 1.25;
-	
-	var metro = global.metronome;
-	var pos = metro.lastIndexOf("=");
-	metro = parseInt(metro.substring(pos+1, metro.length-1));
-	metro /= 15;
-	
-	var beat_per_measure = global.measure;
-	var pos2 = beat_per_measure.lastIndexOf(":");
-	beat_per_measure = parseInt(beat_per_measure.substring(3,4));
-	beat_per_measure = 4/beat_per_measure;
-	
-	var dur = Math.round(noteArray[0].duration*metro*this.state.clip_factor);
-  // var dur = Math.round(noteArray[0].duration*this.state.clip_factor/0.125);
-  // var durRest = Math.round(noteArray[0].duration*this.state.clip_rest/0.125);
-	var durRest = Math.round(noteArray[0].duration*metro*this.state.clip_rest);
-	
-	var letterKey = "";
-	if(noteArray[0].midiNumber == -1)
-	{
+    let beat_per_measure = global.measure;
+    let pos2 = beat_per_measure.lastIndexOf(":");
+    beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
 
-		if (durRest != 0) {
-		  letterKey +="z";
-		  dur = durRest;
-		}	
+    let pos3 = global.measure.lastIndexOf("/");
+    let beatvalue = parseInt(global.measure.substring(pos3 + 1));
+    //console.log(beatvalue);
 
-	}
-	
+    let pos4 = global.length.lastIndexOf("/");
+    let basevalue = parseInt(global.length.substring(pos4+1));
+    //console.log(basevalue);
+
+  	let pos = global.metronome.lastIndexOf("=");
+  	let tempo = parseInt(global.metronome.substring(pos+1));
+    let beats_to_basenote = beatvalue/basevalue;
+  	let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
+  	//console.log(seconds_per_basenote);
+
+    let base_per_measure = beat_per_measure * basevalue;
+  	
+  	let dur = Math.round(noteArray[0].duration/seconds_per_basenote);
+  	
+    /*
+  	var letterKey = "";
+  	if(noteArray[0].midiNumber == -1)
+  	{
+
+  		if (durRest != 0) {
+  		  letterKey +="z";
+  		  dur = durRest;
+  		}	
+
+  	}
+  	
     var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
 	
@@ -167,63 +170,66 @@ class PianoWithRecording extends React.Component {
       letterKey = "_B";
     else if (midiNote == 11)
       letterKey = "B";
-  
-	if(dur == 0)
-	{
-		dur = 1;
-	}
+    
+  	if(dur == 0)
+  	{
+  		dur = 1;
+  	}
 
 
-	var s= dur.toString();
-	
-	if(letterKey == "" || letterKey == "]")
-		s = "";
-	else 
-		global.beat_count += dur;
-	
-	console.log("beat count: " + global.beat_count);
-  
-	if(global.beat_count > (16/beat_per_measure))
-	{
-  		var rem = global.beat_count%(16/beat_per_measure);
-  		var measures = global.beat_count/(32/beat_per_measure);
-      let keyToAdd;
-      if(midiOctave == 4)
-        keyToAdd = letterKey
-      else
-        keyToAdd = letterKey.toLowerCase();   
+  	var s= dur.toString();
+  	
+  	if(letterKey == "" || letterKey == "]")
+  		s = "";
+  	else 
+  		global.beat_count += dur;
+  	
+  	console.log("beat count: " + global.beat_count);
+    
+  	if(global.beat_count > (16/beat_per_measure))
+  	{
+    		var rem = global.beat_count%(16/beat_per_measure);
+    		var measures = global.beat_count/(32/beat_per_measure);
+        let keyToAdd;
+        if(midiOctave == 4)
+          keyToAdd = letterKey
+        else
+          keyToAdd = letterKey.toLowerCase();   
 
-      global.notes += "(";
-      
-      for(let i = 0; i < measures; i++){
-  		  global.notes += letterKey + (16/beat_per_measure).toString() + "|"
-  		}
-      global.notes += letterKey + rem.toString() + ")";
-      global.beat_count = 0;
-      global.measure_num += measures;
-	}
-	else if (midiOctave == 4)
-      global.notes = global.notes + letterKey + s;
-     else 
-      global.notes = global.notes + letterKey.toLowerCase() + s;
-  
-	if(global.beat_count == (16/beat_per_measure))
-	{
-		global.notes = global.notes + "|";
-		global.beat_count = 0;
-		global.measure_num += 1;
-	}
+        global.notes += "(";
+        
+        for(let i = 0; i < measures; i++){
+    		  global.notes += letterKey + (16/beat_per_measure).toString() + "|"
+    		}
+        global.notes += letterKey + rem.toString() + ")";
+        global.beat_count = 0;
+        global.measure_num += measures;
+  	}
+  	else if (midiOctave == 4)
+        global.notes = global.notes + letterKey + s;
+       else 
+        global.notes = global.notes + letterKey.toLowerCase() + s;
+    
+  	if(global.beat_count == (16/beat_per_measure))
+  	{
+  		global.notes = global.notes + "|";
+  		global.beat_count = 0;
+  		global.measure_num += 1;
+  	}
 
-	if(global.measure_num >= 2)
-	{
-		global.notes = global.notes + "\n";
-		global.measure_num = 0;
-	}
-	if(global.beat_count % 4 == 0)
-		global.notes = global.notes + " ";
-	
-	if(noteArray == [])
-		global.beat_count = 0;
+  	if(global.measure_num >= 2)
+  	{
+  		global.notes = global.notes + "\n";
+  		global.measure_num = 0;
+  	}
+  	if(global.beat_count % 4 == 0)
+  		global.notes = global.notes + " "; //why???
+  	
+    //meant to act for clear button 
+    /*
+  	if(noteArray == [])
+  		global.beat_count = 0;
+    */
 
   }
 
