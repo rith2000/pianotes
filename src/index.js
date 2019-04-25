@@ -18,14 +18,20 @@ import './Metronome.css';
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
-const noteRange = {
-  first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('c4'),
+let firstNote = 3;
+let lastNote = 4;
+
+let noteRange = {
+  first: MidiNumbers.fromNote('c' + firstNote),
+  last: MidiNumbers.fromNote('c' + lastNote),
+ 
 };
-const keyboardShortcuts = KeyboardShortcuts.create({
-  firstNote: noteRange.first,
-  lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.HOME_ROW,
+
+let keyboardShortcuts = KeyboardShortcuts.create({
+    firstNote: noteRange.first,
+    lastNote: noteRange.first + 11,
+  
+    keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
 
 class App extends React.Component {
@@ -35,7 +41,12 @@ class App extends React.Component {
       events: [],
       currentTime: 0,
       currentEvents: [],
+
     },
+    firstNote: noteRange.first,
+    lastNote: noteRange.first + 11,
+    
+    
   };
 
   constructor(props) {
@@ -44,6 +55,23 @@ class App extends React.Component {
     this.scheduledEvents = [];
   }
 
+ 
+  increaseOctave = () =>{
+    firstNote = firstNote + 1;
+    lastNote = lastNote + 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+
+  }
+
+  decreaseOctave = () =>{
+    firstNote = firstNote - 1;
+    lastNote = lastNote - 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+  
+  }
+  
   getRecordingEndTime = () => {
     if (this.state.recording.events.length === 0) {
       return 0;
@@ -114,8 +142,9 @@ class App extends React.Component {
 
   render() {
     return (
+      
       <div>
-
+    
        <p> {" "}  </p>
         <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
          <p>
@@ -150,6 +179,7 @@ class App extends React.Component {
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
+    
               />
             </center>
             )}
@@ -172,6 +202,8 @@ class App extends React.Component {
 
           <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
+          <button className = "btn" onClick = {this.decreaseOctave}> Decrease Octave</button>
+          <button className = "btn" onClick = {this.increaseOctave}> Increase Octave</button>
 	       <DropDown></DropDown>
          </div>
 
