@@ -107,6 +107,24 @@ class PianoWithRecording extends React.Component {
   };
 
 
+  dotRem = (orig, acc) =>{
+  	let twoDivide = 0;
+  	let i = 0;
+  	while (Math.pow(2, i) <= orig)
+  	{
+  		twoDivide = Math.pow(2,i);
+  		i++;
+  	}
+
+  	while ((acc + twoDivide) <= orig && twoDivide != 0)
+  	{
+  		acc += twoDivide;
+  		twoDivide /= 2;
+  	}
+
+  	return acc;
+  };
+
   updateNotes = (noteArray) =>{
     let beat_per_measure = global.measure; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
@@ -256,7 +274,17 @@ class PianoWithRecording extends React.Component {
       }
 
     } else{ //normal insertion
-      global.notes += letterKey + dur.toString();
+      //global.notes += letterKey + dur.toString();
+      let dotted = this.dotRem(dur,0);
+	  if (dotted == dur)
+	  {
+	  	global.notes += letterKey + dur.toString();	
+	  }
+	  
+	  else
+	  {
+	  	global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
+	  }
     }
      
     global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
