@@ -213,12 +213,13 @@ class PianoWithRecording extends React.Component {
       let frontRemainder = base_per_measure - global.beat_count;
       console.log("front rem:" + frontRemainder);
       let backRemainder = dur - frontRemainder;
+      dur = backRemainder % base_per_measure;
       global.notes += "(" + letterKey + frontRemainder.toString() + "|";
       var count = 0;
       console.log("back rem:" + backRemainder);
+      let tieDur = 0;
       while(backRemainder > 0){
         console.log("entered loop")
-        let tieDur = 0;
         if(backRemainder > base_per_measure){
           tieDur = base_per_measure;
         } else {
@@ -229,7 +230,11 @@ class PianoWithRecording extends React.Component {
         }
         global.notes += letterKey + tieDur.toString();
         if(tieDur === base_per_measure){
-          global.notes += "|"
+          if(backRemainder - tieDur == 0){
+            global.notes += ")";
+          } else{
+             global.notes += "|"
+          }
           global.measure_num += 1;
           global.beat_count = 0;
           if(global.measure_num >= 2)
@@ -245,7 +250,10 @@ class PianoWithRecording extends React.Component {
           break;
         }
       }
-      global.notes += ")"
+      //
+      if(tieDur != base_per_measure){ //if the last note wasn't a measure
+        global.notes += ")"
+      }
 
     } else{ //normal insertion
       global.notes += letterKey + dur.toString();
