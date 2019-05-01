@@ -8,8 +8,8 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
-	 clip_factor: 1.25,
-	 clip_rest: 1.00,
+   clip_factor: 1.25,
+   clip_rest: 1.00,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -94,7 +94,7 @@ class PianoWithRecording extends React.Component {
         }];
 
   if (duration > 0.5) {
-		this.updateNotes(newEvents);
+    this.updateNotes(newEvents);
 
   }
         console.log(duration);
@@ -106,9 +106,9 @@ class PianoWithRecording extends React.Component {
 
   };
 
-  
+
   updateNotes = (noteArray) =>{
-    let beat_per_measure = global.measure;
+    let beat_per_measure = global.measure; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
     beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
 
@@ -118,117 +118,167 @@ class PianoWithRecording extends React.Component {
 
     let pos4 = global.length.lastIndexOf("/");
     let basevalue = parseInt(global.length.substring(pos4+1));
+    //ie. 16th, 32nd note as the shortest possible note
+    //all note durations are added in terms of the base note duration
     //console.log(basevalue);
 
-  	let pos = global.metronome.lastIndexOf("=");
-  	let tempo = parseInt(global.metronome.substring(pos+1));
+    let pos = global.metronome.lastIndexOf("=");
+    let tempo = parseInt(global.metronome.substring(pos+1));
     let beats_to_basenote = beatvalue/basevalue;
-  	let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
-  	//console.log(seconds_per_basenote);
+    let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
+    //this assumes the beat is a quarter... fix!
+    //console.log(seconds_per_basenote); 
 
-    let base_per_measure = beat_per_measure * basevalue;
-  	
-  	let dur = Math.round(noteArray[0].duration/seconds_per_basenote);
-  	
-    /*
-  	var letterKey = "";
-  	if(noteArray[0].midiNumber == -1)
-  	{
-
-  		if (durRest != 0) {
-  		  letterKey +="z";
-  		  dur = durRest;
-  		}	
-
-  	}
-  	
+    let base_per_measure = beat_per_measure * (basevalue / 4); //fix magic
+    
+    let dur = Math.round(noteArray[0].duration/seconds_per_basenote); //fix! need 
+    console.log(dur);
+    //duration in terms of base note
+    
+    
+    var letterKey = "";
+    if(noteArray[0].midiNumber == -1)
+    {
+        letterKey = "z";
+    } else {
+    
     var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
-	
+  
 
-    if (midiNote == 0) 
-      letterKey = "C";
-    else if (midiNote == 1)
-      letterKey = "_D";
-    else if (midiNote == 2)
-      letterKey = "D";
-    else if (midiNote == 3)
-      letterKey = "_E";
-    else if (midiNote == 4)
-      letterKey = "E";
-    else if (midiNote == 5)
-      letterKey = "F";
-    else if (midiNote == 6)
-      letterKey = "_G";
-    else if (midiNote == 7)
-      letterKey = "G";
-    else if (midiNote == 8)
-      letterKey = "_A";
-    else if (midiNote == 9)
-      letterKey = "A";
-    else if (midiNote == 10)
-      letterKey = "_B";
-    else if (midiNote == 11)
-      letterKey = "B";
+    switch(midiNote) {
+      case(0):
+        letterKey = "C";
+        break;
+      case(1):
+        letterKey = "_D";
+        break;
+      case(2):
+        letterKey = "D";
+        break;
+      case(3):
+        letterKey = "_E";
+        break;
+      case(4):
+        letterKey = "E";
+        break;
+      case(5):
+        letterKey = "F";
+        break;
+      case(6):
+        letterKey = "_G";
+        break;
+      case(7):
+        letterKey = "G";
+        break;
+      case(8):
+        letterKey = "_A";
+        break;
+      case(9):
+        letterKey = "A";
+        break;
+      case(10):
+        letterKey = "_B";
+        break;
+      case(11):
+        letterKey = "B";
+        break;
+    }
+  }
     
-  	if(dur == 0)
-  	{
-  		dur = 1;
-  	}
+    if(dur === 0)
+    {
+      dur = 1;
+    }
 
+    //determine octave
+    if(midiOctave > 4){ //remove magic num later
+      for(let i = 0; i < midiOctave - 4; i++){
+        letterKey += '\'';
+      }
+    } else if (midiOctave < 4){
+      for(let i = 0; i < 4 - midiOctave; i++){
+        letterKey += ',';
+      }
+    }
 
-  	var s= dur.toString();
-  	
-  	if(letterKey == "" || letterKey == "]")
-  		s = "";
-  	else 
-  		global.beat_count += dur;
-  	
-  	console.log("beat count: " + global.beat_count);
+    //purpose??
+    //if(letterKey == "" || letterKey == "]")
+      //durString = "";
     
-  	if(global.beat_count > (16/beat_per_measure))
-  	{
-    		var rem = global.beat_count%(16/beat_per_measure);
-    		var measures = global.beat_count/(32/beat_per_measure);
-        let keyToAdd;
-        if(midiOctave == 4)
-          keyToAdd = letterKey
-        else
-          keyToAdd = letterKey.toLowerCase();   
+    //tie
+    console.log("dur:" + dur);
+    console.log("gbc:" + global.beat_count);
+    if(global.beat_count + dur > base_per_measure){
+      let frontRemainder = base_per_measure - global.beat_count;
+      console.log("front rem:" + frontRemainder);
+      let backRemainder = dur - frontRemainder;
+      global.notes += "(" + letterKey + frontRemainder.toString() + "|";
+      var count = 0;
+      console.log("back rem:" + backRemainder);
+      while(backRemainder > 0){
+        console.log("entered loop")
+        let tieDur = 0;
+        if(backRemainder > base_per_measure){
+          tieDur = base_per_measure;
+        } else {
+          tieDur = backRemainder % (base_per_measure);
+        }
+        if(tieDur === 0){
+          tieDur = base_per_measure;
+        }
+        global.notes += letterKey + tieDur.toString();
+        if(tieDur === base_per_measure){
+          global.notes += "|"
+          global.measure_num += 1;
+          global.beat_count = 0;
+          if(global.measure_num >= 2)
+          {
+            global.notes = global.notes + "\n";
+            global.measure_num = 0;
+          }
+        }
+        backRemainder -= tieDur;
+        count++;
+        if(count >= 100){
+          console.log("infinite")
+          break;
+        }
+      }
+      global.notes += ")"
 
-        global.notes += "(";
-        
-        for(let i = 0; i < measures; i++){
-    		  global.notes += letterKey + (16/beat_per_measure).toString() + "|"
-    		}
-        global.notes += letterKey + rem.toString() + ")";
-        global.beat_count = 0;
-        global.measure_num += measures;
-  	}
-  	else if (midiOctave == 4)
-        global.notes = global.notes + letterKey + s;
-       else 
-        global.notes = global.notes + letterKey.toLowerCase() + s;
+    } else{ //normal insertion
+      global.notes += letterKey + dur.toString();
+    }
+     
+    global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
     
-  	if(global.beat_count == (16/beat_per_measure))
-  	{
-  		global.notes = global.notes + "|";
-  		global.beat_count = 0;
-  		global.measure_num += 1;
-  	}
+    console.log(global.beat_count);
+    console.log(base_per_measure);
 
-  	if(global.measure_num >= 2)
-  	{
-  		global.notes = global.notes + "\n";
-  		global.measure_num = 0;
-  	}
-  	if(global.beat_count % 4 == 0)
-  		global.notes = global.notes + " "; //why???
-  	
+    if(global.beat_count === 0)
+    {
+      console.log("measure break!!");
+      global.notes = global.notes + "|";
+      //global.beat_count = 0;
+      global.measure_num += 1;
+    }
+
+    if(global.measure_num >= 2)
+    {
+      console.log("measure break!!");
+      global.notes = global.notes + "\n";
+      global.measure_num = 0;
+    }
+    
+    if(global.beat_count % 4 == 0)
+      global.notes = global.notes + " "; //why???
+    
+    
     //meant to act for clear button 
     /*
-  	if(noteArray == [])
-  		global.beat_count = 0;
+    if(noteArray == [])
+      global.beat_count = 0;
     */
 
   }
