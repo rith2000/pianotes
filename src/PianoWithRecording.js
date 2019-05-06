@@ -107,7 +107,8 @@ class PianoWithRecording extends React.Component {
   };
 
 
-  dotRem = (orig, acc) =>{
+  dotRem = (orig) =>{
+    let acc = 0;
   	let twoDivide = 0;
   	let i = 0;
   	while (Math.pow(2, i) <= orig)
@@ -116,7 +117,7 @@ class PianoWithRecording extends React.Component {
   		i++;
   	}
 
-  	while ((acc + twoDivide) <= orig && twoDivide != 0)
+  	while ((acc + twoDivide) <= orig && twoDivide !== 0)
   	{
   		acc += twoDivide;
   		twoDivide /= 2;
@@ -124,6 +125,19 @@ class PianoWithRecording extends React.Component {
 
   	return acc;
   };
+
+  insertPitch = (letterKey,dur) =>{
+    let dotted = this.dotRem(dur,0);
+      if (dotted === dur)
+      {
+        global.notes += letterKey + dur.toString(); 
+      }
+      
+      else
+      {
+        global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
+      }
+  }
 
   updateNotes = (noteArray) =>{
     let beat_per_measure = global.measure; //beats per measure
@@ -145,128 +159,129 @@ class PianoWithRecording extends React.Component {
     let beats_to_basenote = beatvalue/basevalue;
     let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
     //this assumes the beat is a quarter... fix!
-    //console.log(seconds_per_basenote); 
+    console.log(seconds_per_basenote);
 
-    let base_per_measure = beat_per_measure * (basevalue / 4); //fix magic
+    let base_per_measure = beat_per_measure / beats_to_basenote;
     
-    let dur = Math.round(noteArray[0].duration/seconds_per_basenote); //fix! need 
-    console.log(dur);
+    let dur = Math.round(noteArray[0].duration/seconds_per_basenote); 
+    console.log(noteArray[0].duration/seconds_per_basenote) 
+    console.log(noteArray[0].duration);
     //duration in terms of base note
     
     
     var letterKey = "";
-    if(noteArray[0].midiNumber == -1)
+    if(noteArray[0].midiNumber === -1) //rests
     {
         letterKey = "z";
+        if(dur >= 8 * base_per_measure){ //magic number
+          console.log("PAUSE")
+          this.props.pause();
+          dur = 9 * base_per_measure - global.beat_count;
+        }
     } else {
     
-    var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
-    var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
-  
-
-    switch(midiNote) {
-      case(0):
-        letterKey = "C";
-        break;
-      case(1):
-        letterKey = "_D";
-        break;
-      case(2):
-        letterKey = "D";
-        break;
-      case(3):
-        letterKey = "_E";
-        break;
-      case(4):
-        letterKey = "E";
-        break;
-      case(5):
-        letterKey = "F";
-        break;
-      case(6):
-        letterKey = "_G";
-        break;
-      case(7):
-        letterKey = "G";
-        break;
-      case(8):
-        letterKey = "_A";
-        break;
-      case(9):
-        letterKey = "A";
-        break;
-      case(10):
-        letterKey = "_B";
-        break;
-      case(11):
-        letterKey = "B";
-        break;
-    }
-  }
+      var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
+      var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
     
-    if(dur === 0)
-    {
-      dur = 1;
-    }
 
-    //determine octave
-    if(midiOctave > 4){ //remove magic num later
-      for(let i = 0; i < midiOctave - 4; i++){
-        letterKey += '\'';
-      }
-    } else if (midiOctave < 4){
-      for(let i = 0; i < 4 - midiOctave; i++){
-        letterKey += ',';
-      }
-    }
-
-    //purpose??
-    //if(letterKey == "" || letterKey == "]")
-      //durString = "";
-    
-    //tie
-    console.log("dur:" + dur);
-    console.log("gbc:" + global.beat_count);
-    if(global.beat_count + dur > base_per_measure){
-      let frontRemainder = base_per_measure - global.beat_count;
-      console.log("front rem:" + frontRemainder);
-      let backRemainder = dur - frontRemainder;
-      dur = backRemainder % base_per_measure;
-      global.notes += "(" + letterKey + frontRemainder.toString() + "|";
-      var count = 0;
-      console.log("back rem:" + backRemainder);
-      let tieDur = 0;
-      while(backRemainder > 0){
-        console.log("entered loop")
-        if(backRemainder > base_per_measure){
-          tieDur = base_per_measure;
-        } else {
-          tieDur = backRemainder % (base_per_measure);
-        }
-        if(tieDur === 0){
-          tieDur = base_per_measure;
-        }
-        global.notes += letterKey + tieDur.toString();
-        if(tieDur === base_per_measure){
-          if(backRemainder - tieDur == 0){
-            global.notes += ")";
-          } else{
-             global.notes += "|"
-          }
-          global.measure_num += 1;
-          global.beat_count = 0;
-          if(global.measure_num >= 2)
-          {
-            global.notes = global.notes + "\n";
-            global.measure_num = 0;
-          }
-        }
-        backRemainder -= tieDur;
-        count++;
-        if(count >= 100){
-          console.log("infinite")
+      switch(midiNote) {
+        case(0):
+          letterKey = "C";
           break;
+        case(1):
+          letterKey = "_D";
+          break;
+        case(2):
+          letterKey = "D";
+          break;
+        case(3):
+          letterKey = "_E";
+          break;
+        case(4):
+          letterKey = "E";
+          break;
+        case(5):
+          letterKey = "F";
+          break;
+        case(6):
+          letterKey = "_G";
+          break;
+        case(7):
+          letterKey = "G";
+          break;
+        case(8):
+          letterKey = "_A";
+          break;
+        case(9):
+          letterKey = "A";
+          break;
+        case(10):
+          letterKey = "_B";
+          break;
+        case(11):
+          letterKey = "B";
+          break;
+      }
+    }
+      
+      if(dur === 0)
+      {
+        dur = 1;
+      }
+
+      //determine octave
+      if(midiOctave > 4){ //remove magic num later
+        for(let i = 0; i < midiOctave - 4; i++){
+          letterKey += '\'';
         }
+      } else if (midiOctave < 4){
+        for(let i = 0; i < 4 - midiOctave; i++){
+          letterKey += ',';
+        }
+      }
+
+      //purpose??
+      //if(letterKey == "" || letterKey == "]")
+        //durString = "";
+      
+      //tie
+      console.log("dur:" + dur);
+      console.log("gbc:" + global.beat_count);
+      if(global.beat_count + dur > base_per_measure){
+        let frontRemainder = base_per_measure - global.beat_count;
+        console.log("front rem:" + frontRemainder);
+        let backRemainder = dur - frontRemainder;
+        dur = backRemainder % base_per_measure;
+        global.notes += "(" + letterKey + frontRemainder.toString() + "|";
+        console.log("back rem:" + backRemainder);
+        let tieDur = 0;
+        while(backRemainder > 0){
+          console.log("entered loop")
+          if(backRemainder > base_per_measure){
+            tieDur = base_per_measure;
+          } else {
+            tieDur = backRemainder % (base_per_measure);
+          }
+          if(tieDur === 0){
+            tieDur = base_per_measure;
+          }
+          this.insertPitch(letterKey,tieDur);
+          //global.notes += letterKey + tieDur.toString();
+          if(tieDur === base_per_measure){
+            if(backRemainder - tieDur == 0){
+              global.notes += ")";
+            } else{
+               global.notes += "|"
+            }
+            global.measure_num += 1;
+            global.beat_count = 0;
+            if(global.measure_num >= 2)
+            {
+              global.notes = global.notes + "\n";
+              global.measure_num = 0;
+            }
+          }
+          backRemainder -= tieDur;
       }
       //
       if(tieDur != base_per_measure){ //if the last note wasn't a measure
@@ -275,20 +290,12 @@ class PianoWithRecording extends React.Component {
 
     } else{ //normal insertion
       //global.notes += letterKey + dur.toString();
-      let dotted = this.dotRem(dur,0);
-	  if (dotted == dur)
-	  {
-	  	global.notes += letterKey + dur.toString();	
-	  }
-	  
-	  else
-	  {
-	  	global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
-	  }
+      this.insertPitch(letterKey, dur);
     }
      
     global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
-    
+    //wrap in insert pitch
+
     console.log(global.beat_count);
     console.log(base_per_measure);
 
