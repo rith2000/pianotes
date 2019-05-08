@@ -104,6 +104,7 @@ class App extends React.Component {
     global.notes=``;
     //global.beat_count;
     global.beat_count = 0;
+    this.setState({paused: false})
   };
 
   pause = () => {
@@ -199,7 +200,7 @@ class App extends React.Component {
           <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
           <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
-	       <DropDown></DropDown>
+	       <DropDown pause={this.pause}></DropDown>
          </div>
 
          
