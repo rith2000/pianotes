@@ -39,6 +39,8 @@ export default class Menu extends React.Component {
     this.props.pause();
     global.notes += 'z' + (this.computeBeatsPerMeasure() - global.beat_count) + `\n\\\nM: 4/4
     `;
+    global.measureUpdated = `M: 4/4
+    `;
     console.log(this.computeBeatsPerMeasure() - global.beat_count)
   }
   onClick34 = () => {
@@ -47,17 +49,23 @@ export default class Menu extends React.Component {
     this.props.pause();
     global.notes += 'z' + (this.computeBeatsPerMeasure() - global.beat_count) + `\n\\\nM: 3/4
     `;
+    global.measureUpdated = `M: 3/4
+    `;
     console.log(this.computeBeatsPerMeasure() - global.beat_count)
   }
   onClick24 = () => {
     this.props.pause();
   	global.notes += 'z' + (this.computeBeatsPerMeasure() - global.beat_count) + `\n\\\nM: 2/4
     `;
+    global.measureUpdated = `M: 2/4
+    `;
     console.log(this.computeBeatsPerMeasure() - global.beat_count)
   }
   onClick68 = () => {
     this.props.pause();
   	global.notes += 'z' + (this.computeBeatsPerMeasure() - global.beat_count) + `\n\\\nM: 6/8
+    `;
+    global.measureUpdated = `M: 6/8
     `;
     console.log(this.computeBeatsPerMeasure() - global.beat_count)
   }
@@ -72,6 +80,7 @@ export default class Menu extends React.Component {
           <DropdownItem onClick = {this.onClick44}>4/4</DropdownItem>
           <DropdownItem onClick = {this.onClick34}>3/4</DropdownItem>
           <DropdownItem onClick = {this.onClick24}>2/4</DropdownItem>
+          <DropdownItem onClick = {this.onClick68}>6/8</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     );

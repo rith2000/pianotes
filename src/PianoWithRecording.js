@@ -140,12 +140,12 @@ class PianoWithRecording extends React.Component {
   }
 
   updateNotes = (noteArray) =>{
-    let beat_per_measure = global.measure; //beats per measure
+    let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
     beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
 
-    let pos3 = global.measure.lastIndexOf("/");
-    let beatvalue = parseInt(global.measure.substring(pos3 + 1));
+    let pos3 = global.measureUpdated.lastIndexOf("/");
+    let beatvalue = parseInt(global.measureUpdated.substring(pos3 + 1));
     //console.log(beatvalue);
 
     let pos4 = global.length.lastIndexOf("/");
@@ -159,9 +159,10 @@ class PianoWithRecording extends React.Component {
     let beats_to_basenote = beatvalue/basevalue;
     let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
     //this assumes the beat is a quarter... fix!
-    console.log(seconds_per_basenote);
+    console.log("beat per measure" + beat_per_measure);
 
     let base_per_measure = beat_per_measure / beats_to_basenote;
+    console.log("base per measure" + base_per_measure);
     
     let dur = Math.round(noteArray[0].duration/seconds_per_basenote); 
     console.log(noteArray[0].duration/seconds_per_basenote) 
