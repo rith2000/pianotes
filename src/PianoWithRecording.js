@@ -1,5 +1,6 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
+import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
   state = {
@@ -8,9 +9,8 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
-	 clip_factor: 1.25,
-	 clip_rest: 1.00,
-
+	  clip_factor: 1.25,
+	  clip_rest: 1.00,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -23,10 +23,10 @@ class PianoWithRecording extends React.Component {
     if (this.state.notesRecorded === true) {
       this.setState({
         notesRecorded: false,
-        noteStart: Date.now()/1000
+        noteStart: Date.now()/1000  
       });
 
-      console.log("onPlay");
+      //console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
@@ -41,7 +41,7 @@ class PianoWithRecording extends React.Component {
       });
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
 
-      console.log("onStop");
+      //console.log("onStop");
       global.startRest =true;
     }
   };
@@ -50,16 +50,6 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
-
-    // var metro = global.metronome;
-    // var pos = metro.lastIndexOf("=");
-    // metro = parseInt(metro.substring(pos+1, metro.length-1));
-    // metro /= 15;
-
-    // duration = Math.round(duration*metro)*0.125;
-    //  if (duration == 0) {
-    //   duration = .125;
-    // }
 
     const newEvents = midiNumbers.map(midiNumber => {
         return {
@@ -80,13 +70,6 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
-    // var metro = global.metronome;
-    // var pos = metro.lastIndexOf("=");
-    // metro = parseInt(metro.substring(pos+1, metro.length-1));
-    // metro /= 15;
-
-    // duration = Math.round(duration*metro)*0.125;
-
 
     const newEvents = 
        [{
@@ -99,40 +82,31 @@ class PianoWithRecording extends React.Component {
 		this.updateNotes(newEvents);
 
   }
-        console.log(duration);
-        console.log (newEvents);
-    // this.props.setRecording({
-    //   events: this.props.recording.events.concat(newEvents),
-    //   currentTime: this.props.recording.currentTime + duration,
-    // });
-
+        //console.log(duration);
+        //console.log (newEvents);
   };
 
   
   updateNotes = (noteArray) =>{
-    
-	this.state.clip_factor = 1.25;
 	
+	App.increaseOctave();
 	var metro = global.metronome;
 	var pos = metro.lastIndexOf("=");
-	metro = parseInt(metro.substring(pos+1, metro.length-1));
+	metro = parseInt(metro.substring(pos+1, metro.length-1), 10);
 	metro /= 15;
 	
 	var beat_per_measure = global.measure;
-	var pos2 = beat_per_measure.lastIndexOf(":");
-	beat_per_measure = parseInt(beat_per_measure.substring(3,4));
+	beat_per_measure = parseInt(beat_per_measure.substring(3,4), 10);
 	beat_per_measure = 4/beat_per_measure;
 	
 	var dur = Math.round(noteArray[0].duration*metro*this.state.clip_factor);
-  // var dur = Math.round(noteArray[0].duration*this.state.clip_factor/0.125);
-  // var durRest = Math.round(noteArray[0].duration*this.state.clip_rest/0.125);
 	var durRest = Math.round(noteArray[0].duration*metro*this.state.clip_rest);
 	
 	var letterKey = "";
-	if(noteArray[0].midiNumber == -1)
+	if(noteArray[0].midiNumber === -1)
 	{
 
-		if (durRest != 0) {
+		if (durRest !== 0) {
 		  letterKey +="z";
 		  dur = durRest;
 		}	
@@ -141,34 +115,34 @@ class PianoWithRecording extends React.Component {
 	
     var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
     var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
-	
+	console.log("Midi", noteArray[0].midiNumber, " ", midiOctave);
 
-    if (midiNote == 0) 
+    if (midiNote === 0) 
       letterKey = "C";
-    else if (midiNote == 1)
+    else if (midiNote === 1)
       letterKey = "_D";
-    else if (midiNote == 2)
+    else if (midiNote === 2)
       letterKey = "D";
-    else if (midiNote == 3)
+    else if (midiNote === 3)
       letterKey = "_E";
-    else if (midiNote == 4)
+    else if (midiNote === 4)
       letterKey = "E";
-    else if (midiNote == 5)
+    else if (midiNote === 5)
       letterKey = "F";
-    else if (midiNote == 6)
+    else if (midiNote === 6)
       letterKey = "_G";
-    else if (midiNote == 7)
+    else if (midiNote === 7)
       letterKey = "G";
-    else if (midiNote == 8)
+    else if (midiNote === 8)
       letterKey = "_A";
-    else if (midiNote == 9)
+    else if (midiNote === 9)
       letterKey = "A";
-    else if (midiNote == 10)
+    else if (midiNote === 10)
       letterKey = "_B";
-    else if (midiNote == 11)
+    else if (midiNote === 11)
       letterKey = "B";
   
-	if(dur == 0)
+	if(dur === 0)
 	{
 		dur = 1;
 	}
@@ -176,30 +150,30 @@ class PianoWithRecording extends React.Component {
 
 	var s= dur.toString();
 	
-	if(letterKey == "" || letterKey == "]")
+	if(letterKey === "" || letterKey === "]")
 		s = "";
 	else 
 		global.beat_count += dur;
 	
-	console.log("beat count: " + global.beat_count);
+	//console.log("beat count: " + global.beat_count);
   
 	if(global.beat_count > (16/beat_per_measure))
 	{
 		var rem = global.beat_count - (16/beat_per_measure);
 		var balanceLeft = dur - rem;
-		if(midiOctave ==4)
+		if(midiOctave === 4)
 			global.notes += "(" + letterKey + balanceLeft.toString() + "|" + letterKey + rem.toString() + ")";
 		else
 			global.notes += "(" + letterKey.toLowerCase() + balanceLeft.toString() + "|" + letterKey.toLowerCase() + rem.toString() + ")";
 		global.beat_count = 0;
 		global.measure_num += 1;
 	}
-	else if (midiOctave == 4)
+	else if (midiOctave === 4)
       global.notes = global.notes + letterKey + s;
      else 
       global.notes = global.notes + letterKey.toLowerCase() + s;
   
-	if(global.beat_count == (16/beat_per_measure))
+	if(global.beat_count === (16/beat_per_measure))
 	{
 		global.notes = global.notes + "|";
 		global.beat_count = 0;
@@ -211,10 +185,10 @@ class PianoWithRecording extends React.Component {
 		global.notes = global.notes + "\n";
 		global.measure_num = 0;
 	}
-	if(global.beat_count % 4 == 0)
+	if(global.beat_count % 4 === 0)
 		global.notes = global.notes + " ";
 	
-	if(noteArray == [])
+	if(noteArray === [])
 		global.beat_count = 0;
 
   }

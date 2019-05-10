@@ -18,14 +18,20 @@ import './Metronome.css';
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
-const noteRange = {
-  first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('c4'),
+let firstNote = 3;
+let lastNote = 4;
+
+let noteRange = {
+  first: MidiNumbers.fromNote('c' + firstNote),
+  last: MidiNumbers.fromNote('c' + lastNote),
+ 
 };
-const keyboardShortcuts = KeyboardShortcuts.create({
-  firstNote: noteRange.first,
-  lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.HOME_ROW,
+
+let keyboardShortcuts = KeyboardShortcuts.create({
+    firstNote: noteRange.first,
+    lastNote: noteRange.first + 11,
+  
+    keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
 
 class App extends React.Component {
@@ -35,13 +41,57 @@ class App extends React.Component {
       events: [],
       currentTime: 0,
       currentEvents: [],
+
     },
+    firstNote: noteRange.first,
+    lastNote: noteRange.first + 11,
   };
 
   constructor(props) {
     super(props);
 
     this.scheduledEvents = [];
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+ 
+  resetKeyboard = () =>{
+    keyboardShortcuts = KeyboardShortcuts.create({
+      firstNote: noteRange.first,
+      lastNote: noteRange.first + 11,
+    
+      keyboardConfig: KeyboardShortcuts.HOME_ROW,
+    });
+  }
+
+  increaseOctave = () =>{
+    firstNote = firstNote + 1;
+    lastNote = lastNote + 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+
+    this.resetKeyboard();
+  }
+
+  decreaseOctave = () =>{
+    firstNote = firstNote - 1;
+    lastNote = lastNote - 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+  
+    this.resetKeyboard();
+  }
+  
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  handleKeyPress(event) {
+    if(event.keyCode === 39 || event.keyCode === 38){
+      this.increaseOctave();
+    }
+    if(event.keyCode === 37 || event.keyCode === 40){
+      this.decreaseOctave();
+    }
   }
 
   getRecordingEndTime = () => {
@@ -108,14 +158,14 @@ class App extends React.Component {
     global.startFlag = true;
     global.startRest = false;
     global.notes=``;
-	global.beat_count = 0;
-
+	  global.beat_count = 0;
   };
 
   render() {
     return (
+      
       <div>
-
+    
        <p> {" "}  </p>
         <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
          <p>
@@ -150,6 +200,7 @@ class App extends React.Component {
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
+    
               />
             </center>
             )}
@@ -175,9 +226,6 @@ class App extends React.Component {
 	       <DropDown></DropDown>
          </div>
 
-         
-
-          
           </center>
 
           <center>
@@ -193,6 +241,35 @@ class App extends React.Component {
     );
   }
 }
+
+/* exports.resetKeyboard = function() {
+    keyboardShortcuts = KeyboardShortcuts.create({
+      firstNote: noteRange.first,
+      lastNote: noteRange.first + 11,
+    
+      keyboardConfig: KeyboardShortcuts.HOME_ROW,
+    });
+  }
+
+exports.increaseOctave = function() {
+	firstNote = firstNote + 1;
+    lastNote = lastNote + 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+
+    this.resetKeyboard();
+};
+
+exports.decreaseOctave = function(){
+	firstNote = firstNote + 1;
+    lastNote = lastNote + 1;
+    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
+    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
+
+    this.resetKeyboard();
+}; */
+
+export default App;
 
 const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
