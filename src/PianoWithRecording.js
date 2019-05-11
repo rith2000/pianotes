@@ -126,7 +126,7 @@ class PianoWithRecording extends React.Component {
   	return acc;
   };
 
-  insertPitch = (letterKey,dur) =>{
+  insertPitch = (letterKey,dur, base_per_measure) =>{
     let dotted = this.dotRem(dur,0);
       if (dotted === dur)
       {
@@ -137,6 +137,7 @@ class PianoWithRecording extends React.Component {
       {
         global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
       }
+      global.beat_count = (dur + global.beat_count)% base_per_measure;
   }
 
   updateNotes = (noteArray) =>{
@@ -253,7 +254,15 @@ class PianoWithRecording extends React.Component {
         console.log("front rem:" + frontRemainder);
         let backRemainder = dur - frontRemainder;
         dur = backRemainder % base_per_measure;
-        global.notes += "(" + letterKey + frontRemainder.toString() + "|";
+        global.notes += "(";
+        this.insertPitch(letterKey, frontRemainder, base_per_measure);
+        global.notes +=  "|";
+        global.measure_num+=1;
+        if (global.measure_num >= 2)
+        {
+          global.notes += "\n";
+          global.measure_num = 0;
+        }
         console.log("back rem:" + backRemainder);
         let tieDur = 0;
         while(backRemainder > 0){
@@ -266,16 +275,17 @@ class PianoWithRecording extends React.Component {
           if(tieDur === 0){
             tieDur = base_per_measure;
           }
-          this.insertPitch(letterKey,tieDur);
+          this.insertPitch(letterKey,tieDur, base_per_measure);
           //global.notes += letterKey + tieDur.toString();
           if(tieDur === base_per_measure){
             if(backRemainder - tieDur == 0){
               global.notes += ")";
             } else{
                global.notes += "|"
+               global.measure_num += 1;
             }
-            global.measure_num += 1;
-            global.beat_count = 0;
+            
+            //global.beat_count = 0;
             if(global.measure_num >= 2)
             {
               global.notes = global.notes + "\n";
@@ -291,12 +301,12 @@ class PianoWithRecording extends React.Component {
 
     } else{ //normal insertion
       //global.notes += letterKey + dur.toString();
-      this.insertPitch(letterKey, dur);
+      this.insertPitch(letterKey, dur, base_per_measure);
     }
      
-    global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
+    //global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
     //wrap in insert pitch
-
+    console.log("measurenum" + global.measure_num);
     console.log(global.beat_count);
     console.log(base_per_measure);
 

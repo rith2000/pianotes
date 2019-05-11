@@ -102,6 +102,7 @@ class App extends React.Component {
   onClickClear = () => {
     this.pause();
     global.notes=``;
+    global.measure = global.measureUpdated;
     //global.beat_count;
     global.beat_count = 0;
     this.setState({paused: false})
