@@ -45,6 +45,7 @@ class App extends React.Component {
     },
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
+    paused: false
   };
 
   constructor(props) {
@@ -106,6 +107,7 @@ class App extends React.Component {
   setRecording = value => {
     this.setState({
       recording: Object.assign({}, this.state.recording, value),
+      paused: false
     });
   };
 
@@ -148,6 +150,15 @@ class App extends React.Component {
   };
 
   onClickClear = () => {
+    this.pause();
+    global.notes=``;
+    global.measure = global.measureUpdated;
+    //global.beat_count;
+    global.beat_count = 0;
+    this.setState({paused: false})
+  };
+
+  pause = () => {
     this.onClickStop();
     this.setRecording({
       events: [],
@@ -155,11 +166,28 @@ class App extends React.Component {
       currentEvents: [],
       currentTime: 0,
     });
+    this.setState({paused: true})
     global.startFlag = true;
     global.startRest = false;
-    global.notes=``;
-	  global.beat_count = 0;
-  };
+    //global.notes=``;
+  }
+
+  onClickPause = () => {
+    if(this.state.paused){
+      this.setRecording();
+      global.startRest = true;
+    } else {
+      this.pause();
+    }
+  }
+
+  pauseButtonText = () =>{
+    if(this.state.paused){
+      return "Paused";
+    } else {
+      return "Pause";
+    }
+  }
 
   render() {
     return (
@@ -200,7 +228,7 @@ class App extends React.Component {
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
-    
+                pause={this.onClickPause}
               />
             </center>
             )}
@@ -223,7 +251,8 @@ class App extends React.Component {
 
           <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
-	       <DropDown></DropDown>
+          <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
+	       <DropDown pause={this.pause}></DropDown>
          </div>
 
           </center>
