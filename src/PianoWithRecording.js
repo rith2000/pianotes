@@ -1,5 +1,6 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
+//import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
   state = {
@@ -22,9 +23,8 @@ class PianoWithRecording extends React.Component {
     if (this.state.notesRecorded === true) {
       this.setState({
         notesRecorded: false,
-        noteStart: Date.now()/1000
+        noteStart: Date.now()/1000  
       });
-      console.log("onPlay");
       if (global.startRest){
         this.recordRests(Date.now()/1000-this.state.restStart);
       }
@@ -39,7 +39,7 @@ class PianoWithRecording extends React.Component {
       });
       this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
 
-      console.log("onStop");
+      //console.log("onStop");
       global.startRest =true;
     }
   };
@@ -49,25 +49,15 @@ class PianoWithRecording extends React.Component {
       return;
     }
 
-    // var metro = global.metronome;
-    // var pos = metro.lastIndexOf("=");
-    // metro = parseInt(metro.substring(pos+1, metro.length-1));
-    // metro /= 15;
-
-    // duration = Math.round(duration*metro)*0.125;
-    //  if (duration == 0) {
-    //   duration = .125;
-    // }
-
-    const newEvents = midiNumbers.map(midiNumber => { //array?
-      return {
-        midiNumber,
-        time: Date.now()/1000 - this.state.originTime, //needed?
-        duration: duration,
-      };
-    });
-    this.updateNotes(newEvents);
-    console.log(global.notes);
+    const newEvents = midiNumbers.map(midiNumber => {
+        return {
+          midiNumber,
+          time: Date.now()/1000 - this.state.originTime,
+          duration: duration,
+        };
+      });
+      this.updateNotes(newEvents);
+      console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
@@ -78,13 +68,6 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
-    // var metro = global.metronome;
-    // var pos = metro.lastIndexOf("=");
-    // metro = parseInt(metro.substring(pos+1, metro.length-1));
-    // metro /= 15;
-
-    // duration = Math.round(duration*metro)*0.125;
-
 
     const newEvents = 
        [{
@@ -97,13 +80,8 @@ class PianoWithRecording extends React.Component {
     this.updateNotes(newEvents);
 
   }
-        console.log(duration);
-        console.log (newEvents);
-    // this.props.setRecording({
-    //   events: this.props.recording.events.concat(newEvents),
-    //   currentTime: this.props.recording.currentTime + duration,
-    // });
-
+        //console.log(duration);
+        //console.log (newEvents);
   };
 
 
@@ -334,7 +312,6 @@ class PianoWithRecording extends React.Component {
     if(noteArray == [])
       global.beat_count = 0;
     */
-
   }
 
   render() {
