@@ -48,16 +48,20 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
+    let count = 0;
 
-    const newEvents = midiNumbers.map(midiNumber => {
-        return {
-          midiNumber,
-          time: Date.now()/1000 - this.state.originTime,
-          duration: duration,
-        };
-      });
-      this.updateNotes(newEvents);
-      console.log(global.notes);
+    const newEvents = midiNumbers.map(midiNum => {
+      count+= 1;
+      console.log("Count" + count + "midiNUm: " + midiNum);
+      return {
+        midiValue: midiNum,
+        time: Date.now()/1000 - this.state.originTime,
+        duration: duration,
+      };
+    });
+    console.log(midiNumber);
+    this.updateNotes(newEvents);
+    console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
@@ -71,7 +75,7 @@ class PianoWithRecording extends React.Component {
 
     const newEvents = 
        [{
-          midiNumber: -1,//change this to -1 or something later
+          midiValue: -1,//change this to -1 or something later
           time: Date.now()/1000 - this.state.originTime,
           duration: duration,
         }];
@@ -119,6 +123,7 @@ class PianoWithRecording extends React.Component {
   }
 
   updateNotes = (noteArray) =>{
+    console.log(noteArray[0].midiValue);
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
     beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
@@ -150,7 +155,7 @@ class PianoWithRecording extends React.Component {
     
     
     var letterKey = "";
-    if(noteArray[0].midiNumber === -1) //rests
+    if(noteArray[0].midiValue === -1) //rests
     {
         letterKey = "z";
         if(dur >= 8 * base_per_measure){ //magic number
@@ -160,8 +165,8 @@ class PianoWithRecording extends React.Component {
         }
     } else {
     
-      var midiOctave = Math.trunc(noteArray[0].midiNumber / 12);
-      var midiNote = Math.trunc(noteArray[0].midiNumber % 12);
+      var midiOctave = Math.trunc(noteArray[0].midiValue / 12);
+      var midiNote = Math.trunc(noteArray[0].midiValue % 12);
     
 
       switch(midiNote) {
@@ -212,11 +217,11 @@ class PianoWithRecording extends React.Component {
       //determine octave
       if(midiOctave > 4){ //remove magic num later
         for(let i = 0; i < midiOctave - 4; i++){
-          letterKey += '\'';
+          letterKey += '\''; //up an octave
         }
       } else if (midiOctave < 4){
         for(let i = 0; i < 4 - midiOctave; i++){
-          letterKey += ',';
+          letterKey += ','; //down an octave
         }
       }
 

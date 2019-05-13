@@ -71,6 +71,12 @@ class App extends React.Component {
     noteRange.last = MidiNumbers.fromNote('c' + lastNote);
 
     this.resetKeyboard();
+    this.setRecording({
+      events: [],
+      mode: 'RECORDING',
+      currentEvents: [],
+      currentTime: 0,
+    });
   }
 
   decreaseOctave = () =>{
@@ -80,6 +86,12 @@ class App extends React.Component {
     noteRange.last = MidiNumbers.fromNote('c' + lastNote);
   
     this.resetKeyboard();
+    this.setRecording({
+      events: [],
+      mode: 'RECORDING',
+      currentEvents: [],
+      currentTime: 0,
+    });
   }
   
   componentDidMount() {
