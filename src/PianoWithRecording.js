@@ -1,6 +1,6 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
-import { App } from './index.js';
+//import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
   state = {
@@ -89,7 +89,6 @@ class PianoWithRecording extends React.Component {
   
   updateNotes = (noteArray) =>{
 	
-	App.increaseOctave();
 	var metro = global.metronome;
 	var pos = metro.lastIndexOf("=");
 	metro = parseInt(metro.substring(pos+1, metro.length-1), 10);
