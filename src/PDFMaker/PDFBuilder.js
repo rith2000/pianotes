@@ -1,28 +1,15 @@
-import { html2canvas } from "html2canvas";
+import * as jsPDF from 'jspdf';
 
 class PDFBuilder extends Component {
-    html2canvas(document.querySelector("#capture")).then(canvas => {
-        document.body.appendChild(canvas)
-    });
-render() {
-    <div id="capture" style="padding: 10px; background: #f5da55">
-        <h4 style="color: #000; ">Hello world!</h4>
-    </div>
-};
-}
+    makePDF = () => {
+        var doc = new jsPDF();
 
-class DownloadButton extends Component {
-    handleClick = () => {
-        var blob = new Blob([global.notes], {
-            type: "text/plain;charset=utf-8"
-        });
-        saveAs(blob, "Successful test Juan.txt");
-    };
+        doc.text('Hello world!', 10, 10)
+        doc.save('a4.pdf')
+    }
     render() {
         return (
-            <div>
-                <button onClick={() => this.handleClick()}>Download your file!</button>
-            </div>
-        );
+            makePDF()
+        )
     }
 }
