@@ -7,13 +7,15 @@ export default class Menu extends React.Component {
     super(props);
 
     this.toggle = this.toggle.bind(this);
+    this.onClick = this.onClick.bind(this);
     this.state = {
       dropdownOpen: false,
     };
   }
 
-  computeBeatsPerMeasure = () => {
-      if(global.beat_count !== 0){ 
+  getRest = () => {
+    if(global.beat_count !== 0){ 
+      //calculate number of beats left in measure in terms of base note
       let beat_per_measure = global.measureUpdated; //beats per measure
       let pos2 = beat_per_measure.lastIndexOf(":");
       beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
@@ -23,10 +25,8 @@ export default class Menu extends React.Component {
       let basevalue = parseInt(global.length.substring(pos4+1));
       let beats_to_basenote = beatvalue/basevalue;
       let base_per_measure = beat_per_measure / beats_to_basenote;
-      //global.beat_count = 0;
       let result = beat_per_measure / beats_to_basenote - global.beat_count;
-      global.beat_count = 0;
-      console.log("RESULT:" + result)
+
       return "z" + result;
     }
     return "";
@@ -37,43 +37,13 @@ export default class Menu extends React.Component {
       dropdownOpen: !prevState.dropdownOpen
     }));
   }
-  //clean up functions??
-  onClick44 = () => {
-  	//global.measure = `M: 4/4
-    //`;
-    this.props.pause();
-    global.notes += this.computeBeatsPerMeasure() + `\n\\\nM: 4/4
-    `;
-    global.measureUpdated = `M: 4/4
-    `;
-    //console.log(this.computeBeatsPerMeasure())
-  }
 
-  onClick34 = () => {
-  	//global.measure = `M: 3/4
-    //`;
+  onClick = (event) =>{
+    let timeSig = event.target.innerText; 
     this.props.pause();
-    global.notes += (this.computeBeatsPerMeasure()) + `\n\\\nM: 3/4
-    `;
-    global.measureUpdated = `M: 3/4
-    `;
-    //console.log(this.computeBeatsPerMeasure())
-  }
-  onClick24 = () => {
-    this.props.pause();
-  	global.notes += this.computeBeatsPerMeasure() + `\n\\\nM: 2/4
-    `;
-    global.measureUpdated = `M: 2/4
-    `;
-    //console.log(this.computeBeatsPerMeasure() - global.beat_count)
-  }
-  onClick68 = () => {
-    this.props.pause();
-  	global.notes += this.computeBeatsPerMeasure() + `\n\\\nM: 6/8
-    `;
-    global.measureUpdated = `M: 6/8
-    `;
-    console.log(this.computeBeatsPerMeasure() - global.beat_count)
+    global.notes += this.getRest() + '\n\\\nM: ' + timeSig + '\n';
+    global.beat_count = 0;
+    global.measureUpdated = 'M: ' + timeSig + '\n'
   }
 
   render() {
@@ -83,10 +53,10 @@ export default class Menu extends React.Component {
           Time Signature
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem onClick = {this.onClick44}>4/4</DropdownItem>
-          <DropdownItem onClick = {this.onClick34}>3/4</DropdownItem>
-          <DropdownItem onClick = {this.onClick24}>2/4</DropdownItem>
-          <DropdownItem onClick = {this.onClick68}>6/8</DropdownItem>
+          <DropdownItem onClick = {this.onClick}>4/4</DropdownItem>
+          <DropdownItem onClick = {this.onClick}>3/4</DropdownItem>
+          <DropdownItem onClick = {this.onClick}>2/4</DropdownItem>
+          <DropdownItem onClick = {this.onClick}>6/8</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     );
