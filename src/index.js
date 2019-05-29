@@ -14,6 +14,10 @@ import DropDown from './DropDown.js';
 import Slider from './Slider.js';
 import './Metronome.css';
 
+//import MidiPlayer from './MidiPlayer';
+
+
+
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
@@ -187,9 +191,22 @@ class App extends React.Component {
   onClickPause = () => {
     if(this.state.paused){
       this.setRecording();
+      //set global notes to 0;
+      //console.log("oh my: " + global.notes);
+      //don't set startRest to true in here
+      //global.startFlag = false;
       global.startRest = true;
+      console.log("she hit it\n");
+      //global.notes = global.notecompare;
+
+
+
     } else {
+      //global.startRest = false;
+      //save global notes variable
+      //global.notecompare = global.notes;
       this.pause();
+
     }
   }
 
@@ -256,6 +273,7 @@ class App extends React.Component {
             <Slider></Slider>
           </div>
         
+
         <div className="mt-5">
          
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
@@ -272,13 +290,16 @@ class App extends React.Component {
           <center>
         <div className="mt-5">
 
+
           <ScoreDisplay/>
 
         </div>
           </center>
-        
+          
         
       </div>
+
+
     );
   }
 }

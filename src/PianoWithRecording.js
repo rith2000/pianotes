@@ -1,8 +1,16 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
-//import { App } from './index.js';
+import { Midi } from 'react-abc';
+import { App } from './index.js';
+
 
 class PianoWithRecording extends React.Component {
+
+   constructor(){
+    super();
+    this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
+  };
+
   state = {
     keysDown: {},
     notesRecorded: true,
@@ -11,6 +19,7 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
+   notes: `abc`,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -52,16 +61,18 @@ class PianoWithRecording extends React.Component {
 
     const newEvents = midiNumbers.map(midiNum => {
       count+= 1;
-      console.log("Count" + count + "midiNUm: " + midiNum);
+      // console.log("Count" + count + "midiNUm: " + midiNum);
       return {
         midiValue: midiNum,
         time: Date.now()/1000 - this.state.originTime,
         duration: duration,
       };
     });
-    console.log(midiNumber);
+    // console.log(midiNumber);
+    
     this.updateNotes(newEvents);
-    console.log(global.notes);
+    
+    // console.log(global.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
@@ -73,17 +84,22 @@ class PianoWithRecording extends React.Component {
       return;
     }
 
-    const newEvents = 
-       [{
-          midiValue: -1,//change this to -1 or something later
-          time: Date.now()/1000 - this.state.originTime,
-          duration: duration,
-        }];
+    //console.log("recording: " + global.notes);
+    // console.log("recording\n");
 
-  if (duration > 0.5) {
-    this.updateNotes(newEvents);
+    
+        const newEvents = 
+           [{
+              midiValue: -1,//change this to -1 or something later
+              time: Date.now()/1000 - this.state.originTime,
+              duration: duration,
+            }];
 
-  }
+      if (duration > 0.5) {
+        this.updateNotes(newEvents);
+
+      }
+    
         //console.log(duration);
         //console.log (newEvents);
   };
@@ -120,10 +136,18 @@ class PianoWithRecording extends React.Component {
         global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
       }
       global.beat_count = (dur + global.beat_count)% base_per_measure;
+
+
   }
 
   updateNotes = (noteArray) =>{
-    console.log(noteArray[0].midiValue);
+
+    this.setState({
+        notes: "a2a2a2",
+      })
+
+    this.state.notes = "bc";
+    // console.log(noteArray[0].midiValue);
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
     beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
@@ -143,23 +167,22 @@ class PianoWithRecording extends React.Component {
     let beats_to_basenote = beatvalue/basevalue;
     let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
     //this assumes the beat is a quarter... fix!
-    console.log("beat per measure" + beat_per_measure);
+    // console.log("beat per measure" + beat_per_measure);
 
     let base_per_measure = beat_per_measure / beats_to_basenote;
-    console.log("base per measure" + base_per_measure);
+    // console.log("base per measure" + base_per_measure);
     
     let dur = Math.round(noteArray[0].duration/seconds_per_basenote); 
-    console.log(noteArray[0].duration/seconds_per_basenote) 
-    console.log(noteArray[0].duration);
+    // console.log(noteArray[0].duration/seconds_per_basenote) 
+    // console.log(noteArray[0].duration);
     //duration in terms of base note
-    
     
     var letterKey = "";
     if(noteArray[0].midiValue === -1) //rests
     {
         letterKey = "z";
         if(dur >= 8 * base_per_measure){ //magic number
-          console.log("PAUSE")
+          // console.log("PAUSE")
           this.props.pause();
           dur = 9 * base_per_measure - global.beat_count;
         }
@@ -230,11 +253,11 @@ class PianoWithRecording extends React.Component {
         //durString = "";
       
       //tie
-      console.log("dur:" + dur);
-      console.log("gbc:" + global.beat_count);
+      // console.log("dur:" + dur);
+      // console.log("gbc:" + global.beat_count);
       if(global.beat_count + dur > base_per_measure){
         let frontRemainder = base_per_measure - global.beat_count;
-        console.log("front rem:" + frontRemainder);
+        // console.log("front rem:" + frontRemainder);
         let backRemainder = dur - frontRemainder;
         dur = backRemainder % base_per_measure;
         global.notes += "(";
@@ -246,10 +269,10 @@ class PianoWithRecording extends React.Component {
           global.notes += "\n";
           global.measure_num = 0;
         }
-        console.log("back rem:" + backRemainder);
+        // console.log("back rem:" + backRemainder);
         let tieDur = 0;
         while(backRemainder > 0){
-          console.log("entered loop")
+          // console.log("entered loop")
           if(backRemainder > base_per_measure){
             tieDur = base_per_measure;
           } else {
@@ -289,9 +312,9 @@ class PianoWithRecording extends React.Component {
      
     //global.beat_count = (dur + global.beat_count)% base_per_measure; //add to beat count
     //wrap in insert pitch
-    console.log("measurenum" + global.measure_num);
-    console.log(global.beat_count);
-    console.log(base_per_measure);
+    // console.log("measurenum" + global.measure_num);
+    // console.log(global.beat_count);
+    // console.log(base_per_measure);
 
     if(global.beat_count === 0)
     {
@@ -317,7 +340,20 @@ class PianoWithRecording extends React.Component {
     if(noteArray == [])
       global.beat_count = 0;
     */
+
+    //this.forceUpdate();
   }
+
+
+  forceUpdateHandler(){
+  // this.setState({
+  //   notes: global.notes
+  // });
+      this.forceUpdate();
+      console.log(global.notes);
+    };
+
+
 
   render() {
     const {
@@ -331,6 +367,8 @@ class PianoWithRecording extends React.Component {
     const { mode, currentEvents } = this.props.recording;
     const activeNotes =
       mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
+      console.log("blah");
+      
     return (
       <div>
         <Piano
@@ -341,9 +379,14 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
+      <Midi notation={global.notes}/>
+      <button onClick= {this.forceUpdateHandler} >FORCE UPDATE</button>
+
       </div>
     );
   }
 }
 
 export default PianoWithRecording;
+
+
