@@ -4,6 +4,7 @@ import { Piano } from 'react-piano';
 
 class Staff{
   constructor(number){
+    this.number = number,
     this.notes = "V: V" + number,
     this.beat_count = 0,
     this.rest_remainder = 0, //remainder from measure in which this string was last used
@@ -253,8 +254,9 @@ class PianoWithRecording extends React.Component {
       restStart: 0,
       clip_factor: 1.25,
       clip_rest: 1.00,
-      staff_objects: [Staff(1), Staff(2), Staff(3), Staff(4), Staff(5)],
-      staffs: [0,1,2,3,4]
+      staff_objects: [new Staff(1), new Staff(2), new Staff(3), new Staff(4), new Staff(5)],
+      staffs: [0,1,2,3,4],
+      staffs_curnote: {}
     };
   }
 
@@ -265,11 +267,25 @@ class PianoWithRecording extends React.Component {
       })
        global.startFlag = false;
     }
-    this.setState({
-      notesRecorded: false,
-      noteStart: Date.now()/1000  
+    let temp_num = this.state.staffs[0];
+    console.log(this.staff_objects)
+    let staff = Staff(this.staff_objects[temp_num])
+    console.log(staff);
+    //pop first staff off the stack
+    this.setState(state => {
+      const [first, ...rest] = state.staffs;
+      return {
+        staffs: rest,
+        notesRecorded: false,
+        noteStart: Date.now()/1000,
+      };
     });
-    if (global.startRest){
+    this.setState({
+      staffs_curnote: {
+        [midiNumber]: temp_num
+      }
+    })
+    if (global.startRest) {
       this.recordRests(Date.now()/1000-this.state.restStart);
     }
   };
@@ -315,11 +331,11 @@ class PianoWithRecording extends React.Component {
     }
 
     const newEvents = 
-       [{
-          midiValue: -1,//change this to -1 or something later
-          time: Date.now()/1000 - this.state.originTime,
-          duration: duration,
-        }];
+    [{
+      midiValue: -1,//change this to -1 or something later
+      time: Date.now()/1000 - this.state.originTime,
+      duration: duration,
+    }];
 
     if (duration > 0.5) {
       this.printNotes(newEvents);
@@ -327,28 +343,19 @@ class PianoWithRecording extends React.Component {
     }
   };
 
-  printNotes = async (events) => {
-    //treat the staffs as a stack
-    let temp_num = state.staffs[0];
-    let staff = staff_objects[temp_num];
-    //pop first staff off the stack
+  printNotes = (events) => {
+    console.log(this.state)
+    let staff_num = this.state.staffs_curnote[events.midiValue];
+    this.staff_objects[staff_num].updateNotes();
+    //push back onto the stack!
     this.setState(state => {
-      const [first, ...rest] = this.state.staffs;
-      return {
-        staffs: rest,
-      };
-    }
-    await staff.updateNotes();
-    //push first staff back onto the stack
-    this.setState(state => {
-      const list = state.staffs.concat(temp_num);
-
+      const list = state.staffs.concat(staff_num);
       return {
         list
       };
-    }
+    });
     global.notes = '';
-    staff_objects.forEach(staff => {
+    this.staff_objects.forEach(staff => {
       global.notes += staff;
     })
   }
