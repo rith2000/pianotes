@@ -24,6 +24,9 @@ class Metronome extends Component {
 	handleBpmChange = event => {
 		const bpm = event.target.value;
 		this.setState({bpm: bpm}); 
+		//global.metronome = `Q:1/4=${bpm}`; 
+		//console.log("bpm: " + bpm);
+		
 	}
 
 	scheduler = () => {
@@ -72,6 +75,7 @@ class Metronome extends Component {
 	}
 
 	render() {
+
 		return <div className = "metronome"> 
 			<div className ="bpm-slider">
 				<div>{this.state.bpm} BPM</div>
