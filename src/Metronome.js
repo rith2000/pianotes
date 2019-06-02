@@ -23,7 +23,9 @@ class Metronome extends Component {
 	
 	handleBpmChange = event => {
 		const bpm = event.target.value;
+		const beatsPerMeas = 
 		this.setState({bpm: bpm}); 
+		
 		//global.metronome = `Q:1/4=${bpm}`; 
 		//console.log("bpm: " + bpm);
 
