@@ -1,24 +1,46 @@
 import React from 'react';
 import { Midi } from 'react-abc';
-import PianoWithRecording from './PianoWithRecording';
 
-const notation1 = global.notes;
+
 
 class MidiPlayer extends React.Component {
-  state = {
-    notation: global.notes
-  };
+
+  constructor(){
+ 	super();
+ 	this.state = {notes: `a2a2a2`}
+  }
+  
+
+  // componentDidUpdate(prevProps){
+  // 	if (this.state.notes == prevProps.notes){
+  // 		this.setState({
+  // 			notes: `a2c2e2`
+  // 		});
+  // 	}j
+  // }
+
+  componentDidUpdate(prevState){
+  	if (prevState.notes !== this.state.notes){
+  		
+  	} 
+  }
 
   render() {
-    let notes = global.notes;
-    console.log("here: " + global.notes);
-    let notation = notes + "c2";
-
-    console.log("type: " + typeof global.notes);
-    console.log("type: " + typeof notation1);
+  	// if (componentDidUpdate(this.state))
+  	// 	this.setState({ notes: `a2b2c2`});
+    let notation = 
+		global.composer +
+		global.measure +
+		global.length +
+		global.metronome +
+		global.clef +
+		global.noteStart +
+		this.state.notes +
+		global.noteEnd;
+	
     return (
      <div>
-    	<Midi notation={notes}/>
+    	<Midi notation={notation}/>
   	</div>
     );
   }

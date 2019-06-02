@@ -6,10 +6,6 @@ import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
 
-   constructor(){
-    super();
-    this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
-  };
 
   state = {
     keysDown: {},
@@ -19,7 +15,7 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-   notes: `abc`,
+
   };
 
   onPlayNoteInput = midiNumber => {
@@ -102,6 +98,7 @@ class PianoWithRecording extends React.Component {
     
         //console.log(duration);
         //console.log (newEvents);
+
   };
 
 
@@ -142,11 +139,7 @@ class PianoWithRecording extends React.Component {
 
   updateNotes = (noteArray) =>{
 
-    this.setState({
-        notes: "a2a2a2",
-      })
-
-    this.state.notes = "bc";
+    
     // console.log(noteArray[0].midiValue);
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
@@ -187,7 +180,7 @@ class PianoWithRecording extends React.Component {
           dur = 9 * base_per_measure - global.beat_count;
         }
     } else {
-    
+
       var midiOctave = Math.trunc(noteArray[0].midiValue / 12);
       var midiNote = Math.trunc(noteArray[0].midiValue % 12);
     
@@ -316,6 +309,7 @@ class PianoWithRecording extends React.Component {
     // console.log(global.beat_count);
     // console.log(base_per_measure);
 
+
     if(global.beat_count === 0)
     {
       console.log("measure break!!");
@@ -345,14 +339,6 @@ class PianoWithRecording extends React.Component {
   }
 
 
-  forceUpdateHandler(){
-  // this.setState({
-  //   notes: global.notes
-  // });
-      this.forceUpdate();
-      console.log(global.notes);
-    };
-
 
 
   render() {
@@ -379,14 +365,16 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-      <Midi notation={global.notes}/>
-      <button onClick= {this.forceUpdateHandler} >FORCE UPDATE</button>
+      
+      
 
       </div>
     );
   }
 }
 
+
 export default PianoWithRecording;
+
 
 
