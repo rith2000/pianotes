@@ -33,7 +33,7 @@ let noteRange = {
 
 let keyboardShortcuts = KeyboardShortcuts.create({
     firstNote: noteRange.first,
-    lastNote: noteRange.first + 11,
+    lastNote: noteRange.first + 12,
   
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
