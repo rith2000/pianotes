@@ -8,7 +8,7 @@ class Staff{
     this.notes = "V: V" + number + " ",
     this.beat_count = 0,
     this.rest_remainder = 0, //remainder from measure in which this string was last used
-    this.measure_last_played = 0
+    this.measure_last_played = 0,
     this.measure_num = 0
   }
 
@@ -285,7 +285,10 @@ class PianoWithRecording extends React.Component {
     });
     this.setState({
       staffs_curnote: {
-        [midiNumber]: temp_num
+        [midiNumber]: {
+          staff: temp_num,
+          originTime: Date.now()/1000
+        }
       }
     })
     if (global.startRest) {
@@ -312,9 +315,10 @@ class PianoWithRecording extends React.Component {
     const newEvents = midiNumbers.map(midiNum => {
       //count+= 1;
       //console.log("Count" + count + "midiNUm: " + midiNum);
+      console.log(this.state.staffs_curnote);
       return {
         midiValue: midiNum,
-        time: Date.now()/1000 - this.state.originTime,
+        time: Date.now()/1000 - this.state.staffs_curnote[midiNum].originTime,
         duration: duration,
       };
     });
@@ -378,8 +382,9 @@ class PianoWithRecording extends React.Component {
     //let staff_num = this.state.staffs_curnote[events.midiValue]; //grab staff number
     //console.log(staff_num);
     console.log(events[0].midiValue);
-    let staff_num = this.state.staffs_curnote[events[0].midiValue]; //grab staff number
-    console.log(staff_num);
+    let midiData = this.state.staffs_curnote[events[0].midiValue]; //grab staff number
+    console.log(midiData);
+    let staff_num = midiData.staff;
     this.state.staff_objects[staff_num].updateNotes(events); //update individual staff
     //push back onto the stack!
     this.setState(state => {
