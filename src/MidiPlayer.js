@@ -10,6 +10,9 @@ class MidiPlayer extends React.Component {
  	this.state = {notes: `a2a2a2`}
   }
   
+  // functionCall = (){
+  // 	this.setState({notes: `b2c2a2`});
+  // }
 
   // componentDidUpdate(prevProps){
   // 	if (this.state.notes == prevProps.notes){
@@ -28,6 +31,7 @@ class MidiPlayer extends React.Component {
   render() {
   	// if (componentDidUpdate(this.state))
   	// 	this.setState({ notes: `a2b2c2`});
+  	// functionCall();
     let notation = 
 		global.composer +
 		global.measure +
@@ -40,7 +44,8 @@ class MidiPlayer extends React.Component {
 	
     return (
      <div>
-    	<Midi notation={notation}/>
+    	<Midi notation={this.props.notes}/>
+    	<MidiPlayer changeNotes = {(global.notes)=>changeNotes}>
   	</div>
     );
   }

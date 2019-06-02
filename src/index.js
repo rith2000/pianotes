@@ -45,11 +45,11 @@ class App extends React.Component {
       events: [],
       currentTime: 0,
       currentEvents: [],
-
     },
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
-    paused: false
+    paused: false,
+    notes: ``
   };
 
   constructor(props) {
@@ -167,7 +167,8 @@ class App extends React.Component {
 
   onClickClear = () => {
     this.pause();
-    global.notes=``;
+    this.setState({notes: ``});
+    //global.notes=``;
     global.measure = global.measureUpdated;
     //global.beat_count;
     global.beat_count = 0;
@@ -216,6 +217,11 @@ class App extends React.Component {
     } else {
       return "Pause";
     }
+  }
+
+  addNotes = (noteString) => {
+    var noteCopy = this.state.notes + noteString;
+    this.setState({notes: noteCopy});
   }
 
   render() {
@@ -302,6 +308,7 @@ class App extends React.Component {
         
       </div>
 
+     
 
     );
   }

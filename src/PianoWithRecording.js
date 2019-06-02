@@ -15,8 +15,11 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
+   notes: ``
 
   };
+
+  //have a function called changeNotes
 
   onPlayNoteInput = midiNumber => {
     if (global.startFlag){
@@ -125,12 +128,14 @@ class PianoWithRecording extends React.Component {
     let dotted = this.dotRem(dur,0);
       if (dotted === dur)
       {
-        global.notes += letterKey + dur.toString(); 
+        this.props.addNotes(letterKey + dur.toString());
+        // global.notes += letterKey + dur.toString(); 
       }
       
       else
       {
-        global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
+        this.props.addNotes("(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")");
+        //global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
       }
       global.beat_count = (dur + global.beat_count)% base_per_measure;
 
@@ -253,13 +258,19 @@ class PianoWithRecording extends React.Component {
         // console.log("front rem:" + frontRemainder);
         let backRemainder = dur - frontRemainder;
         dur = backRemainder % base_per_measure;
-        global.notes += "(";
+
+        this.props.addNotes("(");
+        // global.notes += "(";
+
         this.insertPitch(letterKey, frontRemainder, base_per_measure);
-        global.notes +=  "|";
+
+        this.props.addNotes("|");
+        // global.notes +=  "|";
         global.measure_num+=1;
         if (global.measure_num >= 2)
         {
-          global.notes += "\n";
+          this.props.addNotes("\n");
+          // global.notes += "\n";
           global.measure_num = 0;
         }
         // console.log("back rem:" + backRemainder);
@@ -278,16 +289,22 @@ class PianoWithRecording extends React.Component {
           //global.notes += letterKey + tieDur.toString();
           if(tieDur === base_per_measure){
             if(backRemainder - tieDur == 0){
-              global.notes += ")";
+
+              this.props.addNotes(")");
+              // global.notes += ")";
             } else{
-               global.notes += "|"
+
+              this.props.addNotes("|");
+               // global.notes += "|";
                global.measure_num += 1;
             }
             
             //global.beat_count = 0;
             if(global.measure_num >= 2)
             {
-              global.notes = global.notes + "\n";
+
+              this.props.addNotes(global.notes + "\n");
+              // global.notes = global.notes + "\n";
               global.measure_num = 0;
             }
           }
@@ -295,7 +312,9 @@ class PianoWithRecording extends React.Component {
       }
       //
       if(tieDur != base_per_measure){ //if the last note wasn't a measure
-        global.notes += ")"
+
+        this.props.addNotes(")");
+        // global.notes += ")";
       }
 
     } else{ //normal insertion
@@ -313,7 +332,10 @@ class PianoWithRecording extends React.Component {
     if(global.beat_count === 0)
     {
       console.log("measure break!!");
-      global.notes = global.notes + "|";
+
+      this.props.addNotes(global.notes + "|");
+      // global.notes = global.notes + "|";
+
       //global.beat_count = 0;
       global.measure_num += 1;
     }
@@ -321,12 +343,17 @@ class PianoWithRecording extends React.Component {
     if(global.measure_num >= 2)
     {
       console.log("measure break!!");
-      global.notes = global.notes + "\n";
+
+      this.props.addNotes(global.notes + "\n");
+      // global.notes = global.notes + "\n";
       global.measure_num = 0;
     }
     
-    if(global.beat_count % 4 == 0)
-      global.notes = global.notes + " "; //why???
+    if(global.beat_count % 4 == 0){
+
+      this.props.addNotes(global.notes + " ");
+      // global.notes = global.notes + " "; //why???
+    }
     
     
     //meant to act for clear button 
@@ -336,6 +363,9 @@ class PianoWithRecording extends React.Component {
     */
 
     //this.forceUpdate();
+
+
+    
   }
 
 
