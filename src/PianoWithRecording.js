@@ -276,6 +276,7 @@ class PianoWithRecording extends React.Component {
         restStart: -1
       })
     }
+    console.log(midiNumber)
     console.log("CHECK")
     if (global.startFlag){
       this.setState({
@@ -329,6 +330,7 @@ class PianoWithRecording extends React.Component {
     }
     //let count = 0;
     console.log(this.state)
+    console.log(midiNumbers);
     const newEvents = midiNumbers.map(midiNum => {
       //count+= 1;
       //console.log("Count" + count + "midiNUm: " + midiNum);
@@ -347,7 +349,7 @@ class PianoWithRecording extends React.Component {
     console.log(newEvents);
     console.log("NOTE");
     this.printNotes(newEvents);
-    console.log(this.notes);
+    //console.log(this.notes);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
@@ -379,7 +381,7 @@ class PianoWithRecording extends React.Component {
       staffs_curnote: {
         [-1]: {
           staff: temp_num,
-          originTime: Date.now()/1000
+          originTime: 1 //Date.now()/1000
         }
       }
     })
