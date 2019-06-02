@@ -5,7 +5,7 @@ import { Piano } from 'react-piano';
 class Staff{
   constructor(number){
     this.number = number,
-    this.notes = "V: V" + number,
+    this.notes = "V: V" + number + " ",
     this.beat_count = 0,
     this.rest_remainder = 0, //remainder from measure in which this string was last used
     this.measure_last_played = 0
@@ -243,6 +243,8 @@ class Staff{
   }
 }
 
+//may need to pass event handlers to staves as well? to maintain state/origin time stuff? streamline?
+
 class PianoWithRecording extends React.Component {
   constructor(props){
     super(props)
@@ -261,6 +263,7 @@ class PianoWithRecording extends React.Component {
   }
 
   onPlayNoteInput = midiNumber => {
+    console.log("CHECK")
     if (global.startFlag){
       this.setState({
         originTime: Date.now()/1000, //needed?
@@ -268,8 +271,8 @@ class PianoWithRecording extends React.Component {
        global.startFlag = false;
     }
     let temp_num = this.state.staffs[0];
-    console.log(this.staff_objects)
-    let staff = Staff(this.staff_objects[temp_num])
+    console.log(this.state.staff_objects)
+    let staff = this.state.staff_objects[temp_num];
     console.log(staff);
     //pop first staff off the stack
     this.setState(state => {
@@ -305,18 +308,22 @@ class PianoWithRecording extends React.Component {
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
-    let count = 0;
-
+    //let count = 0;
     const newEvents = midiNumbers.map(midiNum => {
-      count+= 1;
-      console.log("Count" + count + "midiNUm: " + midiNum);
+      //count+= 1;
+      //console.log("Count" + count + "midiNUm: " + midiNum);
       return {
         midiValue: midiNum,
         time: Date.now()/1000 - this.state.originTime,
         duration: duration,
       };
     });
+    if(newEvents.length === 0){
+      return;
+    }
     console.log(midiNumber);
+    console.log(newEvents);
+    console.log("NOTE");
     this.printNotes(newEvents);
     console.log(this.notes);
     this.props.setRecording({
@@ -326,9 +333,30 @@ class PianoWithRecording extends React.Component {
   };
 
   recordRests = (duration) => {
+    if(duration <= .5){
+      return;
+    }
     if (this.props.recording.mode !== 'RECORDING') {
       return;
     }
+    let temp_num = this.state.staffs[0];
+    console.log(this.state.staff_objects)
+    let staff = this.state.staff_objects[temp_num];
+    console.log(staff);
+    //pop first staff off the stack
+    this.setState(state => {
+      const [first, ...rest] = state.staffs;
+      return {
+        staffs: rest,
+        //notesRecorded: false,
+        //noteStart: Date.now()/1000,
+      };
+    });
+    this.setState({
+      staffs_curnote: {
+        [-1]: temp_num
+      }
+    })
 
     const newEvents = 
     [{
@@ -337,16 +365,22 @@ class PianoWithRecording extends React.Component {
       duration: duration,
     }];
 
+    console.log("REST");
+
     if (duration > 0.5) {
       this.printNotes(newEvents);
-
     }
   };
 
   printNotes = (events) => {
     console.log(this.state)
-    let staff_num = this.state.staffs_curnote[events.midiValue];
-    this.staff_objects[staff_num].updateNotes();
+    console.log(events);
+    //let staff_num = this.state.staffs_curnote[events.midiValue]; //grab staff number
+    //console.log(staff_num);
+    console.log(events[0].midiValue);
+    let staff_num = this.state.staffs_curnote[events[0].midiValue]; //grab staff number
+    console.log(staff_num);
+    this.state.staff_objects[staff_num].updateNotes(events); //update individual staff
     //push back onto the stack!
     this.setState(state => {
       const list = state.staffs.concat(staff_num);
@@ -355,9 +389,10 @@ class PianoWithRecording extends React.Component {
       };
     });
     global.notes = '';
-    this.staff_objects.forEach(staff => {
-      global.notes += staff;
+    this.state.staff_objects.forEach(staff => {
+      global.notes += staff.notes + "\n";
     })
+    console.log(global.notes)
   }
 
   render() {
