@@ -1,6 +1,13 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
 //import { App } from './index.js';
+  function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+  }
 
 class Staff{
   constructor(number){
@@ -253,7 +260,7 @@ class PianoWithRecording extends React.Component {
       notesRecorded: true,
       noteStart: 0,
       originTime: 0,
-      restStart: 0,
+      restStart: -1,
       clip_factor: 1.25,
       clip_rest: 1.00,
       staff_objects: [new Staff(1), new Staff(2), new Staff(3), new Staff(4), new Staff(5)],
@@ -263,6 +270,12 @@ class PianoWithRecording extends React.Component {
   }
 
   onPlayNoteInput = midiNumber => {
+    if(this.state.restStart !== -1){
+      this.recordRests(Date.now()/1000 - this.state.restStart);
+      this.setState({
+        restStart: -1
+      })
+    }
     console.log("CHECK")
     if (global.startFlag){
       this.setState({
@@ -291,12 +304,15 @@ class PianoWithRecording extends React.Component {
         }
       }
     })
+    /*
     if (global.startRest) {
       this.recordRests(Date.now()/1000-this.state.restStart);
     }
+    */
   };
 
-  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
+  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {  
+  console.log('RUNNING') 
     this.setState({
       notesRecorded: true,
       restStart: Date.now()/1000
@@ -312,10 +328,12 @@ class PianoWithRecording extends React.Component {
       return;
     }
     //let count = 0;
+    console.log(this.state)
     const newEvents = midiNumbers.map(midiNum => {
       //count+= 1;
       //console.log("Count" + count + "midiNUm: " + midiNum);
       console.log(this.state.staffs_curnote);
+      console.log(midiNum)
       return {
         midiValue: midiNum,
         time: Date.now()/1000 - this.state.staffs_curnote[midiNum].originTime,
@@ -356,16 +374,21 @@ class PianoWithRecording extends React.Component {
         //noteStart: Date.now()/1000,
       };
     });
+
     this.setState({
       staffs_curnote: {
-        [-1]: temp_num
+        [-1]: {
+          staff: temp_num,
+          originTime: Date.now()/1000
+        }
       }
     })
+    console.log(this.state.staffs_curnote)
 
     const newEvents = 
     [{
       midiValue: -1,//change this to -1 or something later
-      time: Date.now()/1000 - this.state.originTime,
+      time: duration,
       duration: duration,
     }];
 
@@ -381,22 +404,32 @@ class PianoWithRecording extends React.Component {
     console.log(events);
     //let staff_num = this.state.staffs_curnote[events.midiValue]; //grab staff number
     //console.log(staff_num);
-    console.log(events[0].midiValue);
-    let midiData = this.state.staffs_curnote[events[0].midiValue]; //grab staff number
+    let midiVal = events[0].midiValue;
+    console.log(midiVal);
+    let midiData = this.state.staffs_curnote[midiVal]; //grab staff number
     console.log(midiData);
     let staff_num = midiData.staff;
     this.state.staff_objects[staff_num].updateNotes(events); //update individual staff
     //push back onto the stack!
     this.setState(state => {
-      const list = state.staffs.concat(staff_num);
+      const staffs = state.staffs.concat(staff_num);
       return {
-        list
+        staffs
       };
     });
+    console.log(this.state.staffs_curnote)
+    delete this.state.staffs_curnote[midiVal];
+    console.log(this.state.staffs_curnote)
+    //add delete stuff curnote ...
     global.notes = '';
     this.state.staff_objects.forEach(staff => {
       global.notes += staff.notes + "\n";
     })
+    if(isEmpty(this.state.staffs_curnote)){
+      this.setState({
+        restStart: Date.now()/1000
+      })
+    }
     console.log(global.notes)
   }
 
