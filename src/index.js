@@ -189,8 +189,14 @@ class App extends React.Component {
 
         </div>
         <center>
-          <div className='enlarge'>
-            <div className="mt-5">
+          <div>
+            <div className="unhide">
+              <br />
+              Composer: You
+              <br />
+              Time Signature: 3/4
+            </div>
+            <div className="mt-5" className='enlarge'>
               <ScoreDisplay />
             </div>
           </div>
