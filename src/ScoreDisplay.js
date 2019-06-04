@@ -8,10 +8,9 @@ class ScoreDisplay extends React.Component {
 		global.measure +
 		global.length +
 		global.metronome +
-		global.clef +
 		global.noteStart +
-		global.notes +
-		global.noteEnd;
+		global.notes;
+		//global.noteEnd;
     return (
      <div>
     	<Notation notation={notation}/>
