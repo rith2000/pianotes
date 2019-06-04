@@ -1,41 +1,41 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import _ from 'lodash';
-import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
-import 'react-piano/dist/styles.css';
-import './global.js'
-import DimensionsProvider from './DimensionsProvider';
-import SoundfontProvider from './SoundfontProvider';
-import PianoWithRecording from './PianoWithRecording';
-import ScoreDisplay from './ScoreDisplay';
+import React from "react";
+import ReactDOM from "react-dom";
+import _ from "lodash";
+import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import "react-piano/dist/styles.css";
+import "./global.js";
+import DimensionsProvider from "./DimensionsProvider";
+import SoundfontProvider from "./SoundfontProvider";
+import PianoWithRecording from "./PianoWithRecording";
+import ScoreDisplay from "./ScoreDisplay";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import DropDown from './DropDown.js';
-import Slider from './Slider.js';
-import './Metronome.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import DropDown from "./DropDown.js";
+import Slider from "./Slider.js";
+import "./Metronome.css";
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
+const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
 
 const noteRange = {
-  first: MidiNumbers.fromNote('c3'),
-  last: MidiNumbers.fromNote('c4'),
+  first: MidiNumbers.fromNote("c3"),
+  last: MidiNumbers.fromNote("c4")
 };
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: noteRange.first,
   lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.HOME_ROW,
+  keyboardConfig: KeyboardShortcuts.HOME_ROW
 });
 
 class App extends React.Component {
   state = {
     recording: {
-      mode: 'RECORDING',
+      mode: "RECORDING",
       events: [],
       currentTime: 0,
-      currentEvents: [],
-    },
+      currentEvents: []
+    }
   };
 
   constructor(props) {
@@ -49,25 +49,25 @@ class App extends React.Component {
       return 0;
     }
     return Math.max(
-      ...this.state.recording.events.map(event => event.time + event.duration),
+      ...this.state.recording.events.map(event => event.time + event.duration)
     );
   };
 
   setRecording = value => {
     this.setState({
-      recording: Object.assign({}, this.state.recording, value),
+      recording: Object.assign({}, this.state.recording, value)
     });
   };
 
   onClickPlay = () => {
     this.setRecording({
-      mode: 'PLAYING',
+      mode: "PLAYING"
     });
     const startAndEndTimes = _.uniq(
       _.flatMap(this.state.recording.events, event => [
         event.time,
-        event.time + event.duration,
-      ]),
+        event.time + event.duration
+      ])
     );
     startAndEndTimes.forEach(time => {
       this.scheduledEvents.push(
@@ -76,9 +76,9 @@ class App extends React.Component {
             return event.time <= time && event.time + event.duration > time;
           });
           this.setRecording({
-            currentEvents,
+            currentEvents
           });
-        }, time * 1000),
+        }, time * 1000)
       );
     });
     // Stop at the end
@@ -92,8 +92,8 @@ class App extends React.Component {
       clearTimeout(scheduledEvent);
     });
     this.setRecording({
-      mode: 'RECORDING',
-      currentEvents: [],
+      mode: "RECORDING",
+      currentEvents: []
     });
   };
 
@@ -101,98 +101,110 @@ class App extends React.Component {
     this.onClickStop();
     this.setRecording({
       events: [],
-      mode: 'RECORDING',
+      mode: "RECORDING",
       currentEvents: [],
-      currentTime: 0,
+      currentTime: 0
     });
     global.startFlag = true;
     global.startRest = false;
-    global.notes=``;
-	global.beat_count = 0;
-
+    global.notes = ``;
+    global.beat_count = 0;
   };
 
   render() {
     return (
       <div>
-
-       <p> {" "}  </p>
-        <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
-         <p>
-          {" "}
-          <center>
+        <div className="hide">
+          <p> </p>
+          <h1 className="h3">
             {" "}
-            <font face="garamond"><font size="5">
-              {" "}
-              A web-app that translates piano playing into sheet music.{" "}
-            </font></font>{" "}
-          </center>{" "}
-        </p>
-         
-        
-
-        <p> {" "}  </p>
-        <div className="mt-5">
-        <DimensionsProvider>
-      {({ containerWidth, containerHeight }) => (
-          <SoundfontProvider
-            instrumentName="acoustic_grand_piano"
-            audioContext={audioContext}
-            hostname={soundfontHostname}
-            render={({ isLoading, playNote, stopNote }) => (
             <center>
-              <PianoWithRecording
-                recording={this.state.recording}
-                setRecording={this.setRecording}
-                noteRange={noteRange}
-                width={containerWidth * 0.4}
-                playNote={playNote}
-                stopNote={stopNote}
-                disabled={isLoading}
-                keyboardShortcuts={keyboardShortcuts}
-              />
-            </center>
-            )}
-          />
-          )}
-          </DimensionsProvider>
-        </div>
-        <p> {" "}  </p>
-        <center>
-         <p> {" "}  </p>
-          <div>
-         
-            <Slider></Slider>
+              {" "}
+              <font face="precious">
+                {" "}
+                <font size="7"> Pianotes </font>
+              </font>
+            </center>{" "}
+          </h1>
+          <p>
+            {" "}
+            <center>
+              {" "}
+              <font face="garamond">
+                <font size="5">
+                  {" "}
+                  A web-app that translates piano playing into sheet music.{" "}
+                </font>
+              </font>{" "}
+            </center>{" "}
+          </p>
+
+          <p> </p>
+          <div className="mt-5">
+            <DimensionsProvider>
+              {({ containerWidth, containerHeight }) => (
+                <SoundfontProvider
+                  instrumentName="acoustic_grand_piano"
+                  audioContext={audioContext}
+                  hostname={soundfontHostname}
+                  render={({ isLoading, playNote, stopNote }) => (
+                    <center>
+                      <PianoWithRecording
+                        recording={this.state.recording}
+                        setRecording={this.setRecording}
+                        noteRange={noteRange}
+                        width={containerWidth * 0.4}
+                        playNote={playNote}
+                        stopNote={stopNote}
+                        disabled={isLoading}
+                        keyboardShortcuts={keyboardShortcuts}
+                      />
+                    </center>
+                  )}
+                />
+              )}
+            </DimensionsProvider>
           </div>
-        
-        <div className="mt-5">
-         
-          <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
+          <p> </p>
+          <center>
+            <p> </p>
+            <div>
+              <Slider />
+            </div>
 
-
-          <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
-          <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
-	       <DropDown></DropDown>
-         </div>
-
-         
-
-          
+            <div className="mt-5">
+              <button className="btn" onClick={this.onClickPlay}>
+                Play
+            </button>{" "}
+              <button className="btn" onClick={this.onClickStop}>
+                Stop
+            </button>{" "}
+              <button className="btn" onClick={this.onClickClear}>
+                Clear
+            </button>{" "}
+              <DropDown />
+            </div>
           </center>
 
-          <center>
-        <div className="mt-5">
-
-          <ScoreDisplay/>
 
         </div>
-          </center>
-        
-        
+        <center>
+          <div>
+            <div className="unhide">
+              <br />
+              Composer: You
+              <br />
+              Time Signature: 3/4
+            </div>
+            <div className="mt-5" className='enlarge'>
+              <ScoreDisplay />
+            </div>
+          </div>
+        </center>
       </div>
     );
   }
 }
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);

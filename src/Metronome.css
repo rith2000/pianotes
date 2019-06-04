@@ -72,3 +72,31 @@
 .dropdown:hover .dropbtn {
   background-color: #3e8e41;
 }
+
+.unhide {
+  display:none;
+  font-size: 2em
+}
+
+
+@media print {
+  .hide {
+    display:none !important;
+  }
+
+  .unhide {
+    display:inline
+  }
+  
+  .enlarge {
+    display:flex;
+    flex-grow:1000;
+  }
+}
+
+
+#downloadButton {
+  display:flex;
+  color: green;
+}
+
