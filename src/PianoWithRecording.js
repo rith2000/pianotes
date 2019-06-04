@@ -5,7 +5,7 @@ import { Piano } from 'react-piano';
 class Staff{
   constructor(number){
     this.number = number,
-    this.notes = "V: V" + number + " ",
+    this.notes = "[V: V" + number + "] ",
     this.beat_count = 0,
     this.rest_remainder = 0, //remainder from measure in which this string was last used
     this.measure_last_played = 0,
@@ -46,7 +46,8 @@ class Staff{
   }
 
   updateNotes = (noteArray) =>{
-    console.log(noteArray[0].midiValue);
+    //console.log(noteArray.midiValue);
+    console.log("UPDATe NOTES");
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
     beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
@@ -66,19 +67,19 @@ class Staff{
     let beats_to_basenote = beatvalue/basevalue;
     let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
     //this assumes the beat is a quarter... fix!
-    console.log("beat per measure" + beat_per_measure);
+    //console.log("beat per measure" + beat_per_measure);
 
     let base_per_measure = beat_per_measure / beats_to_basenote;
-    console.log("base per measure" + base_per_measure);
+    //console.log("base per measure" + base_per_measure);
     
-    let dur = Math.round(noteArray[0].duration/seconds_per_basenote); 
-    console.log(noteArray[0].duration/seconds_per_basenote) 
-    console.log(noteArray[0].duration);
+    let dur = Math.round(noteArray.duration/seconds_per_basenote); 
+    //console.log(noteArray.duration/seconds_per_basenote) 
+    console.log(noteArray.duration);
     //duration in terms of base note
     
     
     var letterKey = "";
-    if(noteArray[0].midiValue === -1) //rests
+    if(noteArray.midiValue === -1) //rests
     {
         letterKey = "z";
         if(dur >= 8 * base_per_measure){ //magic number
@@ -88,8 +89,8 @@ class Staff{
         }
     } else {
     
-      var midiOctave = Math.trunc(noteArray[0].midiValue / 12);
-      var midiNote = Math.trunc(noteArray[0].midiValue % 12);
+      var midiOctave = Math.trunc(noteArray.midiValue / 12);
+      var midiNote = Math.trunc(noteArray.midiValue % 12);
     
 
       switch(midiNote) {
@@ -171,6 +172,7 @@ class Staff{
         }
         console.log("back rem:" + backRemainder);
         let tieDur = 0;
+        let count = 0;
         while(backRemainder > 0){
           console.log("entered loop")
           if(backRemainder > base_per_measure){
@@ -199,6 +201,10 @@ class Staff{
             }
           }
           backRemainder -= tieDur;
+          count++;
+          if(count === 100){
+            break;
+          }
       }
       //
       if(tieDur != base_per_measure){ //if the last note wasn't a measure
@@ -263,7 +269,13 @@ class PianoWithRecording extends React.Component {
   }
 
   onPlayNoteInput = midiNumber => {
-    console.log("CHECK")
+    if(this.state.staffs_curnote.hasOwnProperty(midiNumber)){
+      return;
+      // deal with repeated instances of note until recorded
+      // better handling needed in the future
+    }
+
+    //console.log("On Play: " + midiNumber);
     if (global.startFlag){
       this.setState({
         originTime: Date.now()/1000, //needed?
@@ -271,40 +283,49 @@ class PianoWithRecording extends React.Component {
        global.startFlag = false;
     }
     let temp_num = this.state.staffs[0];
-    console.log(this.state.staff_objects)
     let staff = this.state.staff_objects[temp_num];
-    console.log(staff);
-    //pop first staff off the stack
+
+    // pop first staff off the stack
     this.setState(state => {
       const [first, ...rest] = state.staffs;
       return {
         staffs: rest,
-        notesRecorded: false,
-        noteStart: Date.now()/1000,
+        // notesRecorded: false,
+        // noteStart: Date.now()/1000,
       };
     });
-    this.setState({
-      staffs_curnote: {
-        [midiNumber]: {
+
+    // store note data for later use
+    var obj = this.state.staffs_curnote;
+    obj[midiNumber] = {
           staff: temp_num,
           originTime: Date.now()/1000
-        }
-      }
+    };
+    this.setState({
+      staffs_curnote: obj
     })
+    //console.log(this.state)
+
+    /* Probably do not need
     if (global.startRest) {
-      this.recordRests(Date.now()/1000-this.state.restStart);
+      //this.recordRests(Date.now()/1000-this.state.restStart);
     }
+    */
   };
 
   onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
     this.setState({
       notesRecorded: true,
-      restStart: Date.now()/1000
+      //restStart: Date.now()/1000
     });
-    this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
 
+    if(this.state.staffs_curnote.hasOwnProperty(midiNumber)){
+      this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+      //only record if note has been started
+    }
+    //clean up later?
     //console.log("onStop");
-    global.startRest =true;
+    //global.startRest =true;
   };
 
   recordNotes = (midiNumber, midiNumbers, duration) => {
@@ -312,24 +333,35 @@ class PianoWithRecording extends React.Component {
       return;
     }
     //let count = 0;
+    //console.log("record notes: ")
+    //console.log(midiNumbers)
+
     const newEvents = midiNumbers.map(midiNum => {
       //count+= 1;
       //console.log("Count" + count + "midiNUm: " + midiNum);
-      console.log(this.state.staffs_curnote);
+      //console.log(this.state.staffs_curnote);
+      //console.log(this.state.staffs_curnote[midiNum].originTime)
+      //console.log(Date.now()/1000 - this.state.staffs_curnote[midiNum].originTime);
       return {
         midiValue: midiNum,
-        time: Date.now()/1000 - this.state.staffs_curnote[midiNum].originTime,
-        duration: duration,
+        time: duration,
+        duration: Date.now()/1000 - this.state.staffs_curnote[midiNum].originTime, //?????
       };
     });
     if(newEvents.length === 0){
       return;
     }
-    console.log(midiNumber);
-    console.log(newEvents);
-    console.log("NOTE");
-    this.printNotes(newEvents);
-    console.log(this.notes);
+
+    //console.log("New events: ")
+    //console.log(newEvents);
+    //console.log(duration);
+    //for printing, only need to handle most recent event
+    //console.log("RECENT: ");
+    //console.log(newEvents[0]);
+    //console.log(midiNumber); // replace later?
+    //console.log(newEvents[newEvents.length -1]);
+    
+    this.printNotes(newEvents[newEvents.length -1]);
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
@@ -377,15 +409,17 @@ class PianoWithRecording extends React.Component {
   };
 
   printNotes = (events) => {
-    console.log(this.state)
-    console.log(events);
+    //console.log(this.state)
+    //console.log(events);
     //let staff_num = this.state.staffs_curnote[events.midiValue]; //grab staff number
     //console.log(staff_num);
-    console.log(events[0].midiValue);
-    let midiData = this.state.staffs_curnote[events[0].midiValue]; //grab staff number
-    console.log(midiData);
+    //console.log(events.midiValue);
+    let midiData = this.state.staffs_curnote[events.midiValue]; //grab staff number
+    //console.log(midiData);
     let staff_num = midiData.staff;
+    console.log(events);
     this.state.staff_objects[staff_num].updateNotes(events); //update individual staff
+    
     //push back onto the stack!
     this.setState(state => {
       const list = state.staffs.concat(staff_num);
@@ -395,7 +429,7 @@ class PianoWithRecording extends React.Component {
     });
     global.notes = '';
     this.state.staff_objects.forEach(staff => {
-      global.notes += staff.notes + "\n";
+      global.notes += staff.notes + "]\n";
     })
     console.log(global.notes)
   }

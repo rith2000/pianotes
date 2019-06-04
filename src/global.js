@@ -16,7 +16,7 @@ global.clef = `V: V1 clef=treble
 global.beat_count = 0;
 
 
-global.noteStart = `[V: V1] `;
+global.noteStart = "%%staves {(V1 V2 V3 V4 V5)}\nV: V1 clef=treble\nV: V2 clef=treble\nV: V3 clef=treble\nV: V4 clef=treble\nV: V5 clef=treble\n";
 global.notes = ``;
 global.noteEnd = ` |]
 `;
