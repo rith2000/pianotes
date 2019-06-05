@@ -89,7 +89,7 @@
   }
   
   .enlarge {
-    display:flex;
+    display:inline;
     flex-grow:1000;
   }
 }

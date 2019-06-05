@@ -192,9 +192,8 @@ class App extends React.Component {
           <div>
             <div className="unhide">
               <br />
-              Composer: You
-              <br />
-              Time Signature: 3/4
+              Your Pianotes Composition:
+            
             </div>
             <div className="mt-5" className='enlarge'>
               <ScoreDisplay />
