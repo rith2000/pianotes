@@ -34,13 +34,13 @@ class App extends React.Component {
       mode: "RECORDING",
       events: [],
       currentTime: 0,
-      currentEvents: []
-    }
+      currentEvents: [],
+    },
+    currentComposer: "Anonymous"
   };
 
   constructor(props) {
     super(props);
-
     this.scheduledEvents = [];
   }
 
@@ -58,6 +58,12 @@ class App extends React.Component {
       recording: Object.assign({}, this.state.recording, value)
     });
   };
+
+  changeComposer = composer => {
+    this.setState({
+      currentComposer: composer
+    });
+  }
 
   onClickPlay = () => {
     this.setRecording({
@@ -111,6 +117,24 @@ class App extends React.Component {
     global.beat_count = 0;
   };
 
+
+  handleChange(e) {
+    this.changeComposer(e.target.value);
+  }
+
+  disableInput() {
+    this.setRecording({
+      mode: "PLAYING"
+    });
+  }
+
+  enableInput() {
+    this.setRecording({
+      mode: "RECORDING"
+    });
+  }
+
+
   render() {
     return (
       <div>
@@ -158,6 +182,9 @@ class App extends React.Component {
                         stopNote={stopNote}
                         disabled={isLoading}
                         keyboardShortcuts={keyboardShortcuts}
+                        changeComposer={(composer) => this.changeComposer(composer)}
+                        changeComposer={(composer) => this.changeComposer(composer)}
+                        composerName={this.state.currentComposer}
                       />
                     </center>
                   )}
@@ -190,9 +217,23 @@ class App extends React.Component {
         </div>
         <center>
           <div>
+            <div>
+              <button onClick={() => window.print()}>Download your file!</button>
+            </div>
+            <div>
+              Composer:
+            <input
+                type="text"
+                onFocus={this.disableInput.bind(this)}
+                onBlur={this.enableInput.bind(this)}
+                placeholder="Enter your name here"
+                onChange={this.handleChange.bind(this)}
+                value={this.props.composerName}
+              />
+            </div>
             <div className="unhide">
               <br />
-              Composer: You
+              Composer: {this.state.currentComposer}
               <br />
               Time Signature: 3/4
             </div>

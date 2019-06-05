@@ -10,7 +10,7 @@ class PianoWithRecording extends React.Component {
     originTime: 0,
     restStart: 0,
     clip_factor: 1.25,
-    clip_rest: 1.0
+    clip_rest: 1.0,
   };
 
   onPlayNoteInput = midiNumber => {
@@ -208,6 +208,22 @@ class PianoWithRecording extends React.Component {
     if (noteArray == []) global.beat_count = 0;
   };
 
+  handleChange(e) {
+    this.props.changeComposer(e.target.value);
+  }
+
+  disableInput() {
+    this.setState({
+      notesRecorded: false
+    });
+  }
+
+  enableInput() {
+    this.setState({
+      notesRecorded: true
+    });
+  }
+
   render() {
     const {
       playNote,
@@ -230,7 +246,8 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-        <DownloadButton />
+        <div>
+        </div>
       </div>
     );
   }
