@@ -6,9 +6,10 @@ import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
 
-  constructor(props){
-    super(props);
-  }
+   constructor(){
+    super();
+    this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
+  };
 
   state = {
     keysDown: {},
@@ -18,15 +19,10 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-
+   notes: `abc`,
   };
 
-  //have a function called changeNotes
-
   onPlayNoteInput = midiNumber => {
-
-
-
     if (global.startFlag){
       this.setState({
         originTime: Date.now()/1000, //needed?
@@ -75,7 +71,6 @@ class PianoWithRecording extends React.Component {
     // console.log(midiNumber);
     
     this.updateNotes(newEvents);
-
     
     // console.log(global.notes);
     this.props.setRecording({
@@ -102,13 +97,11 @@ class PianoWithRecording extends React.Component {
 
       if (duration > 0.5) {
         this.updateNotes(newEvents);
- 
 
       }
     
         //console.log(duration);
         //console.log (newEvents);
-
   };
 
 
@@ -149,7 +142,11 @@ class PianoWithRecording extends React.Component {
 
   updateNotes = (noteArray) =>{
 
-    
+    this.setState({
+        notes: "a2a2a2",
+      })
+
+    this.state.notes = "bc";
     // console.log(noteArray[0].midiValue);
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
@@ -190,7 +187,7 @@ class PianoWithRecording extends React.Component {
           dur = 9 * base_per_measure - global.beat_count;
         }
     } else {
-
+    
       var midiOctave = Math.trunc(noteArray[0].midiValue / 12);
       var midiNote = Math.trunc(noteArray[0].midiValue % 12);
     
@@ -263,11 +260,8 @@ class PianoWithRecording extends React.Component {
         // console.log("front rem:" + frontRemainder);
         let backRemainder = dur - frontRemainder;
         dur = backRemainder % base_per_measure;
-
         global.notes += "(";
-
         this.insertPitch(letterKey, frontRemainder, base_per_measure);
-
         global.notes +=  "|";
         global.measure_num+=1;
         if (global.measure_num >= 2)
@@ -293,15 +287,13 @@ class PianoWithRecording extends React.Component {
             if(backRemainder - tieDur === 0){
               global.notes += ")";
             } else{
-
-               global.notes += "|";
+               global.notes += "|"
                global.measure_num += 1;
             }
             
             //global.beat_count = 0;
             if(global.measure_num >= 2)
             {
-
               global.notes = global.notes + "\n";
               global.measure_num = 0;
             }
@@ -310,8 +302,7 @@ class PianoWithRecording extends React.Component {
       }
       //
       if(tieDur != base_per_measure){ //if the last note wasn't a measure
-
-        global.notes += ")";
+        global.notes += ")"
       }
 
     } else{ //normal insertion
@@ -325,13 +316,10 @@ class PianoWithRecording extends React.Component {
     // console.log(global.beat_count);
     // console.log(base_per_measure);
 
-
     if(global.beat_count === 0)
     {
       console.log("measure break!!");
-
       global.notes = global.notes + "|";
-
       //global.beat_count = 0;
       global.measure_num += 1;
     }
@@ -339,15 +327,12 @@ class PianoWithRecording extends React.Component {
     if(global.measure_num >= 2)
     {
       console.log("measure break!!");
-
       global.notes = global.notes + "\n";
       global.measure_num = 0;
     }
     
-    if(global.beat_count % 4 == 0){
-
+    if(global.beat_count % 4 == 0)
       global.notes = global.notes + " "; //why???
-    }
     
     
     //meant to act for clear button 
@@ -357,19 +342,18 @@ class PianoWithRecording extends React.Component {
     */
 
     //this.forceUpdate();
-
-
-    
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   return nextProps.addNotes !== this.props.addNotes
-  // }
 
-  // <input type = "text" 
-  //         noteString = {this.state.notes} 
-  //         onClick = {this.props.addNotes} />
-// <h1 onClick= { () => this.props.addNotes(this.state.notes)}>hello</h1>
+  forceUpdateHandler(){
+  // this.setState({
+  //   notes: global.notes
+  // });
+      this.forceUpdate();
+      console.log(global.notes);
+    };
+
+
 
   render() {
     const {
@@ -384,8 +368,9 @@ class PianoWithRecording extends React.Component {
     //const mode = this.props.recording.mode;
     //const currentEvents = this.props.recording.events;
     const activeNotes =
-      mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
-    console.log("piano child render");
+      mode === 'PLAYING' ? currentEvents.map(event => event.midiValue) : null;
+    //console.log(activeNotes);
+    console.log("blah");
     return (
       <div>
         <Piano
@@ -395,21 +380,15 @@ class PianoWithRecording extends React.Component {
           onStopNoteInput={this.onStopNoteInput}
           activeNotes={activeNotes}
           {...pianoProps}
-
-
         />
-
+      <Midi notation={global.notes}/>
+      <button onClick= {this.forceUpdateHandler} >FORCE UPDATE</button>
 
       </div>
-
-
-
     );
   }
 }
 
-
 export default PianoWithRecording;
-
 
 

@@ -17,7 +17,7 @@ global.beat_count = 0;
 
 
 global.noteStart = `[V: V1] `;
-global.notes = ``;
+global.notes = `a2b2b2`;
 global.copy = ``;
 global.noteEnd = ` |]
 `;
@@ -34,3 +34,8 @@ global.notation =
 	global.noteStart +
 	global.notes +
 	global.noteEnd;
+
+
+
+
+

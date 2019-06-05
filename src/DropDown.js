@@ -38,14 +38,12 @@ export default class Menu extends React.Component {
     }));
   }
 
-
   onClick = (event) =>{
     let timeSig = event.target.innerText; 
     this.props.pause();
     global.notes += this.getRest() + '\n\\\nM: ' + timeSig + '\n';
     global.beat_count = 0;
     global.measureUpdated = 'M: ' + timeSig + '\n'
-
   }
 
   render() {
