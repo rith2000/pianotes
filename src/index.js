@@ -128,9 +128,11 @@ class App extends React.Component {
   };
 
   onClickPlay = () => {
+    //console.log("EVENTS: " + this.state.recording.events);
     this.setRecording({
       mode: 'PLAYING',
     });
+    //console.log(this.state.recording.events);
     const startAndEndTimes = _.uniq(
       _.flatMap(this.state.recording.events, event => [
         event.time,
@@ -146,6 +148,7 @@ class App extends React.Component {
           this.setRecording({
             currentEvents,
           });
+          console.log(currentEvents);
         }, time * 1000),
       );
     });
