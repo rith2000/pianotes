@@ -6,6 +6,9 @@ import { App } from './index.js';
 
 class PianoWithRecording extends React.Component {
 
+  constructor(props){
+    super(props);
+  }
 
   state = {
     keysDown: {},
@@ -15,13 +18,19 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-   notes: ``
 
+    value: "bar",
+    notes: `fff`
   };
 
   //have a function called changeNotes
 
   onPlayNoteInput = midiNumber => {
+    this.setState({
+      value: "no",
+      notes: `ggg`});
+
+
     if (global.startFlag){
       this.setState({
         originTime: Date.now()/1000, //needed?
@@ -69,7 +78,8 @@ class PianoWithRecording extends React.Component {
     });
     // console.log(midiNumber);
     
-    this.updateNotes(newEvents);
+    //this.updateNotes(newEvents);
+    this.props.addNotes(`ccc`);
     
     // console.log(global.notes);
     this.props.setRecording({
@@ -95,7 +105,8 @@ class PianoWithRecording extends React.Component {
             }];
 
       if (duration > 0.5) {
-        this.updateNotes(newEvents);
+        // this.updateNotes(newEvents);
+        this.props.addNotes(`ddd`);
 
       }
     
@@ -303,7 +314,7 @@ class PianoWithRecording extends React.Component {
             if(global.measure_num >= 2)
             {
 
-              this.props.addNotes(global.notes + "\n");
+              this.props.addNotes("\n");
               // global.notes = global.notes + "\n";
               global.measure_num = 0;
             }
@@ -333,7 +344,7 @@ class PianoWithRecording extends React.Component {
     {
       console.log("measure break!!");
 
-      this.props.addNotes(global.notes + "|");
+      this.props.addNotes("|");
       // global.notes = global.notes + "|";
 
       //global.beat_count = 0;
@@ -344,14 +355,14 @@ class PianoWithRecording extends React.Component {
     {
       console.log("measure break!!");
 
-      this.props.addNotes(global.notes + "\n");
+      this.props.addNotes("\n");
       // global.notes = global.notes + "\n";
       global.measure_num = 0;
     }
     
     if(global.beat_count % 4 == 0){
 
-      this.props.addNotes(global.notes + " ");
+      this.props.addNotes(" ");
       // global.notes = global.notes + " "; //why???
     }
     
@@ -368,8 +379,14 @@ class PianoWithRecording extends React.Component {
     
   }
 
+  // shouldComponentUpdate(nextProps) {
+  //   return nextProps.addNotes !== this.props.addNotes
+  // }
 
-
+  // <input type = "text" 
+  //         noteString = {this.state.notes} 
+  //         onClick = {this.props.addNotes} />
+// <h1 onClick= { () => this.props.addNotes(this.state.notes)}>hello</h1>
 
   render() {
     const {
@@ -383,6 +400,8 @@ class PianoWithRecording extends React.Component {
     const { mode, currentEvents } = this.props.recording;
     const activeNotes =
       mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
+    console.log("piano child render");
+
       
     return (
       <div>
@@ -393,11 +412,15 @@ class PianoWithRecording extends React.Component {
           onStopNoteInput={this.onStopNoteInput}
           activeNotes={activeNotes}
           {...pianoProps}
+
+
         />
-      
-      
+
 
       </div>
+
+
+
     );
   }
 }

@@ -5,33 +5,33 @@ import { Midi } from 'react-abc';
 
 class MidiPlayer extends React.Component {
 
-  constructor(){
- 	super();
- 	this.state = {notes: `a2a2a2`}
+  state = {
+  	notes: `fff`
+  }
+
+  constructor(props){
+ 	super(props);
+ 	// this.state = {notes: ``}
   }
   
   // functionCall = (){
   // 	this.setState({notes: `b2c2a2`});
   // }
 
-  // componentDidUpdate(prevProps){
-  // 	if (this.state.notes == prevProps.notes){
-  // 		this.setState({
-  // 			notes: `a2c2e2`
-  // 		});
-  // 	}j
-  // }
-
-  componentDidUpdate(prevState){
-  	if (prevState.notes !== this.state.notes){
+  // componentDidUpdate(prevState){
+  // 	if (prevState.notes !== this.state.notes){
   		
-  	} 
-  }
+  // 	} 
+  // }
 
   render() {
   	// if (componentDidUpdate(this.state))
   	// 	this.setState({ notes: `a2b2c2`});
   	// functionCall();
+  	//<MidiPlayer changeNotes = {(this.state.notes)=>addNotes}>
+
+
+  	//<Midi notation={this.state.notes}/>
     let notation = 
 		global.composer +
 		global.measure +
@@ -44,9 +44,11 @@ class MidiPlayer extends React.Component {
 	
     return (
      <div>
-    	<Midi notation={this.props.notes}/>
-    	<MidiPlayer changeNotes = {(global.notes)=>changeNotes}>
+        <h1 onClick= { () => this.props.addNotes(this.state.notes)}>hello</h1>
+    	
   	</div>
+  	  
+
     );
   }
 }
