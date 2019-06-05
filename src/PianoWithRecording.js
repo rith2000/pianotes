@@ -290,8 +290,7 @@ class PianoWithRecording extends React.Component {
           this.insertPitch(letterKey,tieDur, base_per_measure);
           //global.notes += letterKey + tieDur.toString();
           if(tieDur === base_per_measure){
-            if(backRemainder - tieDur == 0){
-
+            if(backRemainder - tieDur === 0){
               global.notes += ")";
             } else{
 
@@ -382,11 +381,11 @@ class PianoWithRecording extends React.Component {
     } = this.props;
 
     const { mode, currentEvents } = this.props.recording;
+    //const mode = this.props.recording.mode;
+    //const currentEvents = this.props.recording.events;
     const activeNotes =
       mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
     console.log("piano child render");
-
-      
     return (
       <div>
         <Piano
