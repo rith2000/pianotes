@@ -19,16 +19,12 @@ class PianoWithRecording extends React.Component {
    clip_factor: 1.25,
    clip_rest: 1.00,
 
-    value: "bar",
-    notes: `fff`
   };
 
   //have a function called changeNotes
 
   onPlayNoteInput = midiNumber => {
-    this.setState({
-      value: "no",
-      notes: `ggg`});
+
 
 
     if (global.startFlag){
@@ -78,8 +74,8 @@ class PianoWithRecording extends React.Component {
     });
     // console.log(midiNumber);
     
-    //this.updateNotes(newEvents);
-    this.props.addNotes(`ccc`);
+    this.updateNotes(newEvents);
+
     
     // console.log(global.notes);
     this.props.setRecording({
@@ -105,8 +101,8 @@ class PianoWithRecording extends React.Component {
             }];
 
       if (duration > 0.5) {
-        // this.updateNotes(newEvents);
-        this.props.addNotes(`ddd`);
+        this.updateNotes(newEvents);
+ 
 
       }
     
@@ -139,14 +135,12 @@ class PianoWithRecording extends React.Component {
     let dotted = this.dotRem(dur,0);
       if (dotted === dur)
       {
-        this.props.addNotes(letterKey + dur.toString());
-        // global.notes += letterKey + dur.toString(); 
+        global.notes += letterKey + dur.toString(); 
       }
       
       else
       {
-        this.props.addNotes("(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")");
-        //global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
+        global.notes += "(" + letterKey + dotted.toString() + letterKey + (dur-dotted).toString() + ")";
       }
       global.beat_count = (dur + global.beat_count)% base_per_measure;
 
@@ -270,18 +264,15 @@ class PianoWithRecording extends React.Component {
         let backRemainder = dur - frontRemainder;
         dur = backRemainder % base_per_measure;
 
-        this.props.addNotes("(");
-        // global.notes += "(";
+        global.notes += "(";
 
         this.insertPitch(letterKey, frontRemainder, base_per_measure);
 
-        this.props.addNotes("|");
-        // global.notes +=  "|";
+        global.notes +=  "|";
         global.measure_num+=1;
         if (global.measure_num >= 2)
         {
-          this.props.addNotes("\n");
-          // global.notes += "\n";
+          global.notes += "\n";
           global.measure_num = 0;
         }
         // console.log("back rem:" + backRemainder);
@@ -301,12 +292,10 @@ class PianoWithRecording extends React.Component {
           if(tieDur === base_per_measure){
             if(backRemainder - tieDur == 0){
 
-              this.props.addNotes(")");
-              // global.notes += ")";
+              global.notes += ")";
             } else{
 
-              this.props.addNotes("|");
-               // global.notes += "|";
+               global.notes += "|";
                global.measure_num += 1;
             }
             
@@ -314,8 +303,7 @@ class PianoWithRecording extends React.Component {
             if(global.measure_num >= 2)
             {
 
-              this.props.addNotes("\n");
-              // global.notes = global.notes + "\n";
+              global.notes = global.notes + "\n";
               global.measure_num = 0;
             }
           }
@@ -324,8 +312,7 @@ class PianoWithRecording extends React.Component {
       //
       if(tieDur != base_per_measure){ //if the last note wasn't a measure
 
-        this.props.addNotes(")");
-        // global.notes += ")";
+        global.notes += ")";
       }
 
     } else{ //normal insertion
@@ -344,8 +331,7 @@ class PianoWithRecording extends React.Component {
     {
       console.log("measure break!!");
 
-      this.props.addNotes("|");
-      // global.notes = global.notes + "|";
+      global.notes = global.notes + "|";
 
       //global.beat_count = 0;
       global.measure_num += 1;
@@ -355,15 +341,13 @@ class PianoWithRecording extends React.Component {
     {
       console.log("measure break!!");
 
-      this.props.addNotes("\n");
-      // global.notes = global.notes + "\n";
+      global.notes = global.notes + "\n";
       global.measure_num = 0;
     }
     
     if(global.beat_count % 4 == 0){
 
-      this.props.addNotes(" ");
-      // global.notes = global.notes + " "; //why???
+      global.notes = global.notes + " "; //why???
     }
     
     

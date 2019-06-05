@@ -6,14 +6,8 @@ class ScoreDisplay extends React.Component {
   	super(props);
   }
 
-  componentDidMount(){
-  	this.setState({notes: this.props.notes});
-  }
-
   render() {
-  		global.notes = this.props.notes;
-
-  		console.log("props.notes: " + this.props.notes);
+ 
 
     let notation = 
 		global.composer +
@@ -23,7 +17,6 @@ class ScoreDisplay extends React.Component {
 		global.clef +
 		global.noteStart +
 		global.notes +
-		// this.props.notes +
 		global.noteEnd;
     return (
      <div>

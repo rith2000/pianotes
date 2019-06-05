@@ -11,8 +11,7 @@ import ScoreDisplay from './ScoreDisplay';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
-import MidiPlayer from './MidiPlayer';
-import { Midi } from 'react-abc';
+
 
 import Metronome from './Metronome.js';
 import './Metronome.css';
@@ -50,7 +49,7 @@ class App extends React.Component {
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
     paused: false,
-    
+
   };
 
   constructor(props) {
@@ -58,10 +57,6 @@ class App extends React.Component {
 
     this.scheduledEvents = [];
     this.handleKeyPress = this.handleKeyPress.bind(this);
-
-    this.addNotes = this.addNotes.bind(this);
-
-    this.someMethod = this.someMethod.bind(this);
     
   }
  
@@ -173,8 +168,8 @@ class App extends React.Component {
 
   onClickClear = () => {
     this.pause();
-    this.setState({notes: ``});
-    //global.notes=``;
+
+    global.notes=``;
     global.measure = global.measureUpdated;
     //global.beat_count;
     global.beat_count = 0;
@@ -204,11 +199,11 @@ class App extends React.Component {
       //don't set startRest to true in here
       //global.startFlag = false;
       global.startRest = true;
-      // this.addNotes(`abc`);
+      
       
       //global.notes = global.notecompare;
 
-      // this.addNotes(`abc` + `bbb`);
+
 
     } else {
       //global.startRest = false;
@@ -226,20 +221,6 @@ class App extends React.Component {
       return "Pause";
     }
   }
-
-  addNotes = (noteString) => {
-    //console.log(noteString);
-    var noteCopy = this.state.notes + noteString.toString();
-    //noteCopy = noteCopy.toString();
-    this.setState({notes: noteCopy});
-    console.log("state.notes: " + this.state.notes);
-  }
-
-  someMethod  = (value) => {
-     console.log("value from child", value);
-  }
-
-
 
   
 
@@ -294,8 +275,6 @@ class App extends React.Component {
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
                 pause={this.onClickPause}
-                someMethod = {this.someMethod}
-                addNotes = {() => this.addNotes(this.state.notes)}
                 
               />
             </center>
@@ -311,7 +290,6 @@ class App extends React.Component {
           
         
         <div className="mt-5">
-          <MidiPlayer addNotes = {this.addNotes}/>
          
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
