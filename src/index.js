@@ -11,7 +11,7 @@ import ScoreDisplay from './ScoreDisplay';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
-import Slider from './Slider.js';
+import Metronome from './Metronome.js';
 import './Metronome.css';
 
 //import MidiPlayer from './MidiPlayer';
@@ -33,7 +33,7 @@ let noteRange = {
 
 let keyboardShortcuts = KeyboardShortcuts.create({
     firstNote: noteRange.first,
-    lastNote: noteRange.first + 11,
+    lastNote: noteRange.first + 12,
   
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
@@ -273,7 +273,7 @@ class App extends React.Component {
          <p> {" "}  </p>
           <div>
          
-            <Slider></Slider>
+            <Metronome/>
           </div>
         
 

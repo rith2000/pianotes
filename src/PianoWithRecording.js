@@ -1,6 +1,5 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
-import { Midi } from 'react-abc';
 import { App } from './index.js';
 
 
@@ -8,7 +7,6 @@ class PianoWithRecording extends React.Component {
 
    constructor(){
     super();
-    this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
   };
 
   state = {
@@ -19,7 +17,7 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-   notes: `abc`,
+ 
   };
 
   onPlayNoteInput = midiNumber => {
@@ -345,16 +343,6 @@ class PianoWithRecording extends React.Component {
   }
 
 
-  forceUpdateHandler(){
-  // this.setState({
-  //   notes: global.notes
-  // });
-      this.forceUpdate();
-      console.log(global.notes);
-    };
-
-
-
   render() {
     const {
       playNote,
@@ -381,8 +369,6 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-      <Midi notation={global.notes}/>
-      <button onClick= {this.forceUpdateHandler} >FORCE UPDATE</button>
 
       </div>
     );
