@@ -2,7 +2,13 @@ import React from 'react';
 import { Notation } from 'react-abc';
 
 class ScoreDisplay extends React.Component {
+  constructor(props){
+  	super(props);
+  }
+
   render() {
+ 
+
     let notation = 
 		global.composer +
 		global.measure +

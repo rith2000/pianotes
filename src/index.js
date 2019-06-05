@@ -11,10 +11,10 @@ import ScoreDisplay from './ScoreDisplay';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
-import Slider from './Slider.js';
-import './Metronome.css';
 
-//import MidiPlayer from './MidiPlayer';
+
+import Metronome from './Metronome.js';
+import './Metronome.css';
 
 
 
@@ -33,7 +33,7 @@ let noteRange = {
 
 let keyboardShortcuts = KeyboardShortcuts.create({
     firstNote: noteRange.first,
-    lastNote: noteRange.first + 11,
+    lastNote: noteRange.first + 12,
   
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
 });
@@ -45,11 +45,11 @@ class App extends React.Component {
       events: [],
       currentTime: 0,
       currentEvents: [],
-
     },
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
-    paused: false
+    paused: false,
+
   };
 
   constructor(props) {
@@ -57,6 +57,7 @@ class App extends React.Component {
 
     this.scheduledEvents = [];
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    
   }
  
   resetKeyboard = () =>{
@@ -170,6 +171,7 @@ class App extends React.Component {
 
   onClickClear = () => {
     this.pause();
+
     global.notes=``;
     global.measure = global.measureUpdated;
     //global.beat_count;
@@ -188,6 +190,7 @@ class App extends React.Component {
     this.setState({paused: true})
     global.startFlag = true;
     global.startRest = false;
+
     //global.notes=``;
   }
 
@@ -199,7 +202,8 @@ class App extends React.Component {
       //don't set startRest to true in here
       //global.startFlag = false;
       global.startRest = true;
-      console.log("she hit it\n");
+      
+      
       //global.notes = global.notecompare;
 
 
@@ -221,20 +225,33 @@ class App extends React.Component {
     }
   }
 
+  
+
   render() {
+
+    
+    // console.log("notesss: " + this.state.notes);//print
+    // console.log("parent render");
+
+    //addNotes = {() => this.addNotes(this.state.notes)}
     return (
+
+
       
       <div>
     
        <p> {" "}  </p>
-        <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
+
+
+
+        <h1 className="h3"> <center> <font face="precious"> <font size="20"> Pianotes </font></font></center> </h1>
          <p>
           {" "}
           <center>
             {" "}
             <font face="garamond"><font size="5">
               {" "}
-              A web-app that translates piano playing into sheet music.{" "}
+              
             </font></font>{" "}
           </center>{" "}
         </p>
@@ -261,6 +278,7 @@ class App extends React.Component {
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
                 pause={this.onClickPause}
+                
               />
             </center>
             )}
@@ -271,22 +289,22 @@ class App extends React.Component {
         <p> {" "}  </p>
         <center>
          <p> {" "}  </p>
-          <div>
-         
-            <Slider></Slider>
-          </div>
         
-
+          
+        
         <div className="mt-5">
          
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
-
-
-          <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
+          <button className="btn" onClick={this.onClickStop}>Download</button>{" "}
           <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
 	       <DropDown pause={this.pause}></DropDown>
+          <Metronome></Metronome>
+
+
          </div>
+
+      
 
           </center>
 
@@ -294,7 +312,7 @@ class App extends React.Component {
         <div className="mt-5">
 
 
-          <ScoreDisplay/>
+          <ScoreDisplay />
 
         </div>
           </center>
@@ -302,6 +320,7 @@ class App extends React.Component {
         
       </div>
 
+     
 
     );
   }
@@ -323,6 +342,7 @@ exports.increaseOctave = function() {
     noteRange.last = MidiNumbers.fromNote('c' + lastNote);
 
     this.resetKeyboard();
+
 };
 
 exports.decreaseOctave = function(){
