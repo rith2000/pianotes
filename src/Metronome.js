@@ -113,8 +113,7 @@ class Metronome extends Component {
 	}
 
 	render() {
-		console.log("bPM:" + this.state.beatsPerMeasure);
-		console.log("BPM:" + this.state.bpm);
+		
 		return <div className = "metronome"> 
 			<div className ="bpm-slider">
 				<div>{this.state.bpm} BPM</div>

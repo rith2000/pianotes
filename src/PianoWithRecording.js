@@ -1,11 +1,13 @@
 import  React  from 'react';
 import { Piano } from 'react-piano';
-import { Midi } from 'react-abc';
 import { App } from './index.js';
 
 
 class PianoWithRecording extends React.Component {
 
+   constructor(){
+    super();
+  };
 
   state = {
     keysDown: {},
@@ -15,7 +17,7 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-
+ 
   };
 
   onPlayNoteInput = midiNumber => {
@@ -98,7 +100,6 @@ class PianoWithRecording extends React.Component {
     
         //console.log(duration);
         //console.log (newEvents);
-
   };
 
 
@@ -139,7 +140,11 @@ class PianoWithRecording extends React.Component {
 
   updateNotes = (noteArray) =>{
 
-    
+    this.setState({
+        notes: "a2a2a2",
+      })
+
+    this.state.notes = "bc";
     // console.log(noteArray[0].midiValue);
     let beat_per_measure = global.measureUpdated; //beats per measure
     let pos2 = beat_per_measure.lastIndexOf(":");
@@ -180,7 +185,7 @@ class PianoWithRecording extends React.Component {
           dur = 9 * base_per_measure - global.beat_count;
         }
     } else {
-
+    
       var midiOctave = Math.trunc(noteArray[0].midiValue / 12);
       var midiNote = Math.trunc(noteArray[0].midiValue % 12);
     
@@ -277,7 +282,7 @@ class PianoWithRecording extends React.Component {
           this.insertPitch(letterKey,tieDur, base_per_measure);
           //global.notes += letterKey + tieDur.toString();
           if(tieDur === base_per_measure){
-            if(backRemainder - tieDur == 0){
+            if(backRemainder - tieDur === 0){
               global.notes += ")";
             } else{
                global.notes += "|"
@@ -309,7 +314,6 @@ class PianoWithRecording extends React.Component {
     // console.log(global.beat_count);
     // console.log(base_per_measure);
 
-
     if(global.beat_count === 0)
     {
       console.log("measure break!!");
@@ -339,8 +343,6 @@ class PianoWithRecording extends React.Component {
   }
 
 
-
-
   render() {
     const {
       playNote,
@@ -351,9 +353,12 @@ class PianoWithRecording extends React.Component {
     } = this.props;
 
     const { mode, currentEvents } = this.props.recording;
+    //const mode = this.props.recording.mode;
+    //const currentEvents = this.props.recording.events;
     const activeNotes =
-      mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
-      
+      mode === 'PLAYING' ? currentEvents.map(event => event.midiValue) : null;
+    //console.log(activeNotes);
+    console.log("blah");
     return (
       <div>
         <Piano
@@ -364,16 +369,12 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-      
-      
 
       </div>
     );
   }
 }
 
-
 export default PianoWithRecording;
-
 
 

@@ -11,10 +11,10 @@ import ScoreDisplay from './ScoreDisplay';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
-import MidiPlayer from './MidiPlayer';
-
 import Metronome from './Metronome.js';
 import './Metronome.css';
+
+//import MidiPlayer from './MidiPlayer';
 
 
 
@@ -128,9 +128,11 @@ class App extends React.Component {
   };
 
   onClickPlay = () => {
+    //console.log("EVENTS: " + this.state.recording.events);
     this.setRecording({
       mode: 'PLAYING',
     });
+    //console.log(this.state.recording.events);
     const startAndEndTimes = _.uniq(
       _.flatMap(this.state.recording.events, event => [
         event.time,
@@ -146,6 +148,7 @@ class App extends React.Component {
           this.setRecording({
             currentEvents,
           });
+          console.log(currentEvents);
         }, time * 1000),
       );
     });
@@ -185,7 +188,6 @@ class App extends React.Component {
     this.setState({paused: true})
     global.startFlag = true;
     global.startRest = false;
-
     //global.notes=``;
   }
 
@@ -199,6 +201,7 @@ class App extends React.Component {
       global.startRest = true;
       console.log("she hit it\n");
       //global.notes = global.notecompare;
+
 
 
     } else {
@@ -224,17 +227,14 @@ class App extends React.Component {
       <div>
     
        <p> {" "}  </p>
-
-
-
-        <h1 className="h3"> <center> <font face="precious"> <font size="20"> Pianotes </font></font></center> </h1>
+        <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
          <p>
           {" "}
           <center>
             {" "}
             <font face="garamond"><font size="5">
               {" "}
-              
+              A web-app that translates piano playing into sheet music.{" "}
             </font></font>{" "}
           </center>{" "}
         </p>
@@ -271,22 +271,22 @@ class App extends React.Component {
         <p> {" "}  </p>
         <center>
          <p> {" "}  </p>
+          <div>
+         
+            <Metronome/>
+          </div>
         
-          
-        
+
         <div className="mt-5">
-          <MidiPlayer/>
          
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
+
+
+          <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
-          <button className="btn" onClick={this.onClickStop}>Download</button>{" "}
           <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
 	       <DropDown pause={this.pause}></DropDown>
-          <Metronome></Metronome>
-
          </div>
-
-      
 
           </center>
 
