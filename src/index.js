@@ -12,15 +12,12 @@ import ScoreDisplay from './ScoreDisplay';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDown from './DropDown.js';
 
-
 import Metronome from './Metronome.js';
 import './Metronome.css';
 
-
-
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
+const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
 
 let firstNote = 3;
 let lastNote = 4;
@@ -41,7 +38,7 @@ let keyboardShortcuts = KeyboardShortcuts.create({
 class App extends React.Component {
   state = {
     recording: {
-      mode: 'RECORDING',
+      mode: "RECORDING",
       events: [],
       currentTime: 0,
       currentEvents: [],
@@ -49,7 +46,6 @@ class App extends React.Component {
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
     paused: false,
-
   };
 
   constructor(props) {
@@ -117,7 +113,7 @@ class App extends React.Component {
       return 0;
     }
     return Math.max(
-      ...this.state.recording.events.map(event => event.time + event.duration),
+      ...this.state.recording.events.map(event => event.time + event.duration)
     );
   };
 
@@ -130,13 +126,13 @@ class App extends React.Component {
 
   onClickPlay = () => {
     this.setRecording({
-      mode: 'PLAYING',
+      mode: "PLAYING"
     });
     const startAndEndTimes = _.uniq(
       _.flatMap(this.state.recording.events, event => [
         event.time,
-        event.time + event.duration,
-      ]),
+        event.time + event.duration
+      ])
     );
     startAndEndTimes.forEach(time => {
       this.scheduledEvents.push(
@@ -145,9 +141,9 @@ class App extends React.Component {
             return event.time <= time && event.time + event.duration > time;
           });
           this.setRecording({
-            currentEvents,
+            currentEvents
           });
-        }, time * 1000),
+        }, time * 1000)
       );
     });
     // Stop at the end
@@ -161,8 +157,8 @@ class App extends React.Component {
       clearTimeout(scheduledEvent);
     });
     this.setRecording({
-      mode: 'RECORDING',
-      currentEvents: [],
+      mode: "RECORDING",
+      currentEvents: []
     });
   };
 
@@ -180,9 +176,9 @@ class App extends React.Component {
     this.onClickStop();
     this.setRecording({
       events: [],
-      mode: 'RECORDING',
+      mode: "RECORDING",
       currentEvents: [],
-      currentTime: 0,
+      currentTime: 0
     });
     this.setState({paused: true})
     global.startFlag = true;
@@ -222,8 +218,6 @@ class App extends React.Component {
     }
   }
 
-  
-
   render() {
 
     
@@ -246,7 +240,7 @@ class App extends React.Component {
           {" "}
           <center>
             {" "}
-            <font face="garamond"><font size="5">
+            <center>
               {" "}
               
             </font></font>{" "}
@@ -306,15 +300,38 @@ class App extends React.Component {
           </center>
 
           <center>
-        <div className="mt-5">
+            <p> </p>
+            <div>
+              <Slider />
+            </div>
 
-
-          <ScoreDisplay />
-
-        </div>
+            <div className="mt-5">
+              <button className="btn" onClick={this.onClickPlay}>
+                Play
+            </button>{" "}
+              <button className="btn" onClick={this.onClickStop}>
+                Stop
+            </button>{" "}
+              <button className="btn" onClick={this.onClickClear}>
+                Clear
+            </button>{" "}
+              <DropDown />
+            </div>
           </center>
-          
-        
+        </div>
+        <center>
+          <div>
+            <div className="unhide">
+              <br />
+              Composer: You
+              <br />
+              Time Signature: 3/4
+            </div>
+            <div className="mt-5" className='enlarge'>
+              <ScoreDisplay />
+            </div>
+          </div>
+        </center>
       </div>
 
      
