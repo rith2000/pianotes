@@ -7,10 +7,55 @@ class Staff{
     this.number = number,
     this.notes = "[V: V" + number + "] ",
     this.beat_count = 0,
-    this.rest_remainder = 0, //remainder from measure in which this string was last used
-    this.measure_last_played = 0,
-    this.measure_num = 0
+    //this.rest_remainder = 0, //remainder from measure in which this string was last used
+    this.measure_num = 0,
+    this.lastPlayed = Date.now()/1000
   }
+
+  updateMeasures = () => {
+    console.log("beAT count: " + this.beat_count)
+    let now = Date.now()/1000;
+    console.log("DATE NOW " + Date.now()/1000);
+    console.log("last played" + this.lastPlayed)
+    let duration = now - this.lastPlayed;
+    console.log("dur" + duration);
+    let baseDuration = Math.round(duration/ this.calculateSecondsPerBase);
+    let base_per_measure = this.calculateBasePerMeasure();
+
+    let remainder = base_per_measure - this.beat_count
+    if (baseDuration > remainder) {
+      this.notes += 'x' + remainder + '|';
+      baseDuration -= remainder;
+
+      //fill in extra measures
+      while(baseDuration >= base_per_measure){
+        this.notes += 'x' + base_per_measure + '|';
+        baseDuration -= base_per_measure;
+      }
+      //fill in back remainder
+      if(baseDuration !== 0){
+        this.notes += 'x' + baseDuration;
+      }
+    } else{
+      //if baseDuration is not enough to fill the rest of the measure
+      this.notes += 'x' + baseDuration;
+    }
+    //update beat count
+    this.beat_count = (this.beat_count + baseDuration) % base_per_measure;
+    console.log("beAT count: " + this.beat_count)
+  }
+
+/*
+updateRests()
+{
+  let total = 0
+  for(let i = 0, i < global.beat_count - this.beat_count, i++)
+  {
+    total++;
+  }
+  this.notes +=  "z" + total;
+}
+*/
 
   dotRem = (orig) =>{
     let acc = 0;
@@ -45,7 +90,7 @@ class Staff{
       this.beat_count = (dur + this.beat_count)% base_per_measure;
   }
 
-  updateNotes = (noteArray) =>{
+  calculateSecondsPerBase = () => {
     //console.log(noteArray.midiValue);
     console.log("UPDATe NOTES");
     let beat_per_measure = global.measureUpdated; //beats per measure
@@ -71,6 +116,82 @@ class Staff{
 
     let base_per_measure = beat_per_measure / beats_to_basenote;
     //console.log("base per measure" + base_per_measure);
+    
+    //let dur = Math.round(noteArray.duration/seconds_per_basenote); 
+    //console.log(noteArray.duration/seconds_per_basenote) 
+    //console.log(noteArray.duration);
+    //duration in terms of base note
+    return seconds_per_basenote;
+  }
+
+  calculateBasePerMeasure = () => {
+    //console.log(noteArray.midiValue);
+    console.log("UPDATe NOTES");
+    let beat_per_measure = global.measureUpdated; //beats per measure
+    let pos2 = beat_per_measure.lastIndexOf(":");
+    beat_per_measure = parseInt(beat_per_measure.substring(pos2 + 1));
+
+    let pos3 = global.measureUpdated.lastIndexOf("/");
+    let beatvalue = parseInt(global.measureUpdated.substring(pos3 + 1));
+    //console.log(beatvalue);
+
+    let pos4 = global.length.lastIndexOf("/");
+    let basevalue = parseInt(global.length.substring(pos4+1));
+    //ie. 16th, 32nd note as the shortest possible note
+    //all note durations are added in terms of the base note duration
+    //console.log(basevalue);
+
+    let pos = global.metronome.lastIndexOf("=");
+    let tempo = parseInt(global.metronome.substring(pos+1));
+    let beats_to_basenote = beatvalue/basevalue;
+    let seconds_per_basenote = 60/ tempo * beats_to_basenote; //std to 60, where 1q = 1s, 
+    //this assumes the beat is a quarter... fix!
+    //console.log("beat per measure" + beat_per_measure);
+
+    let base_per_measure = beat_per_measure / beats_to_basenote;
+    //console.log("base per measure" + base_per_measure);
+    
+    //let dur = Math.round(noteArray.duration/seconds_per_basenote); 
+    //console.log(noteArray.duration/seconds_per_basenote) 
+    //console.log(noteArray.duration);
+    //duration in terms of base note
+
+    return base_per_measure;
+  }
+
+  updateNotes = (noteArray) =>{
+    console.log("beAT count: " + this.beat_count)
+    let now = Date.now()/1000;
+    console.log("DATE NOW " + Date.now()/1000);
+    console.log("last played" + this.lastPlayed)
+    let duration = now - this.lastPlayed;
+    console.log("dur" + duration);
+    let seconds_per_basenote = this.calculateSecondsPerBase();
+    let baseDuration = Math.round(duration/ seconds_per_basenote);
+    let base_per_measure = this.calculateBasePerMeasure();
+
+    let remainder = base_per_measure - this.beat_count
+    if (baseDuration > remainder) {
+      this.notes += 'x' + remainder + '|';
+      baseDuration -= remainder;
+
+      //fill in extra measures
+      while(baseDuration >= base_per_measure){
+        this.notes += 'x' + base_per_measure + '|';
+        baseDuration -= base_per_measure;
+      }
+      //fill in back remainder
+      if(baseDuration !== 0){
+        this.notes += 'x' + baseDuration;
+      }
+    } else{
+      //if baseDuration is not enough to fill the rest of the measure
+      this.notes += 'x' + baseDuration;
+    }
+    //update beat count
+    this.beat_count = (this.beat_count + baseDuration) % base_per_measure;
+    console.log("beAT count: " + this.beat_count)
+    //console.log(noteArray.midiValue);
     
     let dur = Math.round(noteArray.duration/seconds_per_basenote); 
     //console.log(noteArray.duration/seconds_per_basenote) 
@@ -432,6 +553,7 @@ class PianoWithRecording extends React.Component {
       global.notes += staff.notes + "]\n";
     })
     console.log(global.notes)
+    //if(this.state.staffs_curnote)
   }
 
   render() {
