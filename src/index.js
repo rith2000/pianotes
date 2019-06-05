@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
@@ -14,13 +15,16 @@ import DropDown from './DropDown.js';
 import Metronome from './Metronome.js';
 import './Metronome.css';
 
+import DownloadButton from "./PDFMaker/DownloadButton";
+
 //import MidiPlayer from './MidiPlayer';
 
 
 
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
+const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
+
 
 let firstNote = 3;
 let lastNote = 4;
@@ -36,20 +40,23 @@ let keyboardShortcuts = KeyboardShortcuts.create({
     lastNote: noteRange.first + 12,
   
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
+
 });
 
 class App extends React.Component {
   state = {
     recording: {
-      mode: 'RECORDING',
+      mode: "RECORDING",
       events: [],
       currentTime: 0,
+
       currentEvents: [],
 
     },
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
     paused: false
+
   };
 
   constructor(props) {
@@ -116,28 +123,30 @@ class App extends React.Component {
       return 0;
     }
     return Math.max(
-      ...this.state.recording.events.map(event => event.time + event.duration),
+      ...this.state.recording.events.map(event => event.time + event.duration)
     );
   };
 
   setRecording = value => {
     this.setState({
+
       recording: Object.assign({}, this.state.recording, value),
       paused: false
+
     });
   };
 
   onClickPlay = () => {
     //console.log("EVENTS: " + this.state.recording.events);
     this.setRecording({
-      mode: 'PLAYING',
+      mode: "PLAYING"
     });
     //console.log(this.state.recording.events);
     const startAndEndTimes = _.uniq(
       _.flatMap(this.state.recording.events, event => [
         event.time,
-        event.time + event.duration,
-      ]),
+        event.time + event.duration
+      ])
     );
     startAndEndTimes.forEach(time => {
       this.scheduledEvents.push(
@@ -146,10 +155,11 @@ class App extends React.Component {
             return event.time <= time && event.time + event.duration > time;
           });
           this.setRecording({
-            currentEvents,
+            currentEvents
           });
           console.log(currentEvents);
         }, time * 1000),
+
       );
     });
     // Stop at the end
@@ -163,8 +173,8 @@ class App extends React.Component {
       clearTimeout(scheduledEvent);
     });
     this.setRecording({
-      mode: 'RECORDING',
-      currentEvents: [],
+      mode: "RECORDING",
+      currentEvents: []
     });
   };
 
@@ -181,23 +191,21 @@ class App extends React.Component {
     this.onClickStop();
     this.setRecording({
       events: [],
-      mode: 'RECORDING',
+      mode: "RECORDING",
       currentEvents: [],
-      currentTime: 0,
+      currentTime: 0
     });
     this.setState({paused: true})
     global.startFlag = true;
     global.startRest = false;
+
     //global.notes=``;
   }
 
   onClickPause = () => {
     if(this.state.paused){
       this.setRecording();
-      //set global notes to 0;
-      //console.log("oh my: " + global.notes);
-      //don't set startRest to true in here
-      //global.startFlag = false;
+     
       global.startRest = true;
       console.log("she hit it\n");
       //global.notes = global.notecompare;
@@ -205,9 +213,7 @@ class App extends React.Component {
 
 
     } else {
-      //global.startRest = false;
-      //save global notes variable
-      //global.notecompare = global.notes;
+      
       this.pause();
 
     }
@@ -221,85 +227,100 @@ class App extends React.Component {
     }
   }
 
+
   render() {
     return (
       
       <div>
-    
-       <p> {" "}  </p>
-        <h1 className="h3"> <center> <font face="precious"> <font size="7"> Pianotes </font></font></center> </h1>
-         <p>
-          {" "}
-          <center>
+
+        <div className="hide">
+          <p> </p>
+          <h1 className="h3">
             {" "}
-            <font face="garamond"><font size="5">
-              {" "}
-              A web-app that translates piano playing into sheet music.{" "}
-            </font></font>{" "}
-          </center>{" "}
-        </p>
-         
-        
-
-        <p> {" "}  </p>
-        <div className="mt-5">
-        <DimensionsProvider>
-      {({ containerWidth, containerHeight }) => (
-          <SoundfontProvider
-            instrumentName="acoustic_grand_piano"
-            audioContext={audioContext}
-            hostname={soundfontHostname}
-            render={({ isLoading, playNote, stopNote }) => (
             <center>
-              <PianoWithRecording
-                recording={this.state.recording}
-                setRecording={this.setRecording}
-                noteRange={noteRange}
-                width={containerWidth * 0.4}
-                playNote={playNote}
-                stopNote={stopNote}
-                disabled={isLoading}
-                keyboardShortcuts={keyboardShortcuts}
-                pause={this.onClickPause}
-              />
-            </center>
-            )}
-          />
-          )}
-          </DimensionsProvider>
-        </div>
-        <p> {" "}  </p>
-        <center>
-         <p> {" "}  </p>
-          <div>
-         
-            <Metronome/>
-          </div>
-        
+              {" "}
+              <font face="precious">
+                {" "}
+                <font size="7"> Pianotes </font>
+              </font>
+            </center>{" "}
+          </h1>
+          <p>
+            {" "}
+            <center>
 
-        <div className="mt-5">
-         
+              {" "}
+              <font face="garamond">
+                <font size="5">
+                  {" "}
+                  A web-app that translates piano playing into sheet music.{" "}
+                </font>
+              </font>{" "}
+            </center>{" "}
+          </p>
+
+          <p> </p>
+          <div className="mt-5">
+            <DimensionsProvider>
+              {({ containerWidth, containerHeight }) => (
+                <SoundfontProvider
+                  instrumentName="acoustic_grand_piano"
+                  audioContext={audioContext}
+                  hostname={soundfontHostname}
+                  render={({ isLoading, playNote, stopNote }) => (
+                    <center>
+                      <PianoWithRecording
+                        recording={this.state.recording}
+                        setRecording={this.setRecording}
+                        noteRange={noteRange}
+                        width={containerWidth * 0.4}
+                        playNote={playNote}
+                        stopNote={stopNote}
+                        disabled={isLoading}
+                        keyboardShortcuts={keyboardShortcuts}
+                      />
+                    </center>
+                  )}
+                />
+              )}
+            </DimensionsProvider>
+          </div>
+          <p> </p>
+
+          <center>
+            <p> </p>
+            <div className = "mt-5">
+              <DownloadButton />
+              <Metronome />
+            </div>
+
+         <div className="mt-5">
+            
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
 
-
-          <button className="btn" onClick={this.onClickStop}>Stop</button>{" "}
           <button className="btn" onClick={this.onClickClear}>Clear</button>{" "}
           <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
-	       <DropDown pause={this.pause}></DropDown>
+
+         <DropDown pause={this.pause}></DropDown>
          </div>
 
           </center>
 
-          <center>
-        <div className="mt-5">
-
-
-          <ScoreDisplay/>
 
         </div>
-          </center>
-          
-        
+        <center>
+          <div>
+            <div className="unhide">
+              <br />
+              Your Pianotes Composition:
+            
+            </div>
+            <div className="mt-5" className='enlarge'>
+              <ScoreDisplay />
+            </div>
+          </div>
+        </center>
+
       </div>
 
 

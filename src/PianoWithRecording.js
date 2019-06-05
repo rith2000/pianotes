@@ -1,6 +1,8 @@
+
 import  React  from 'react';
 import { Piano } from 'react-piano';
 import { App } from './index.js';
+
 
 
 class PianoWithRecording extends React.Component {
@@ -15,17 +17,20 @@ class PianoWithRecording extends React.Component {
     noteStart: 0,
     originTime: 0,
     restStart: 0,
-   clip_factor: 1.25,
-   clip_rest: 1.00,
- 
+
+    clip_factor: 1.25,
+    clip_rest: 1.0
+
   };
 
   onPlayNoteInput = midiNumber => {
-    if (global.startFlag){
+    if (global.startFlag) {
       this.setState({
+
         originTime: Date.now()/1000, //needed?
       })
        global.startFlag = false;
+
     }
     if (this.state.notesRecorded === true) {
       this.setState({
@@ -38,24 +43,31 @@ class PianoWithRecording extends React.Component {
     }
   };
 
-  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
+  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {
     if (this.state.notesRecorded === false) {
       this.setState({
         notesRecorded: true,
-        restStart: Date.now()/1000
+        restStart: Date.now() / 1000
       });
-      this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+      this.recordNotes(
+        midiNumber,
+        prevActiveNotes,
+        Date.now() / 1000 - this.state.noteStart
+      );
+
 
       //console.log("onStop");
       global.startRest =true;
+
     }
   };
 
   recordNotes = (midiNumber, midiNumbers, duration) => {
-    if (this.props.recording.mode !== 'RECORDING') {
+    if (this.props.recording.mode !== "RECORDING") {
       return;
     }
     let count = 0;
+
 
     const newEvents = midiNumbers.map(midiNum => {
       count+= 1;
@@ -74,16 +86,18 @@ class PianoWithRecording extends React.Component {
     this.props.setRecording({
       events: this.props.recording.events.concat(newEvents), //needed??
       currentTime: this.props.recording.currentTime + duration,
+
     });
   };
 
-  recordRests = (duration) => {
-    if (this.props.recording.mode !== 'RECORDING') {
+  recordRests = duration => {
+    if (this.props.recording.mode !== "RECORDING") {
       return;
     }
 
     //console.log("recording: " + global.notes);
     // console.log("recording\n");
+
 
     
         const newEvents = 
@@ -343,6 +357,7 @@ class PianoWithRecording extends React.Component {
   }
 
 
+
   render() {
     const {
       playNote,
@@ -356,9 +371,10 @@ class PianoWithRecording extends React.Component {
     //const mode = this.props.recording.mode;
     //const currentEvents = this.props.recording.events;
     const activeNotes =
+
       mode === 'PLAYING' ? currentEvents.map(event => event.midiValue) : null;
     //console.log(activeNotes);
-    console.log("blah");
+
     return (
       <div>
         <Piano
@@ -369,6 +385,8 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
+
+
 
       </div>
     );
