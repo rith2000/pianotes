@@ -2,6 +2,7 @@ import  React  from 'react';
 import { Piano } from 'react-piano';
 import { Midi } from 'react-abc';
 import { App } from './index.js';
+import DownloadButton from "./PDFMaker/DownloadButton";
 
 
 class PianoWithRecording extends React.Component {
@@ -15,11 +16,10 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
    clip_factor: 1.25,
    clip_rest: 1.00,
-
   };
 
   onPlayNoteInput = midiNumber => {
-    if (global.startFlag){
+    if (global.startFlag) {
       this.setState({
         originTime: Date.now()/1000, //needed?
       })
@@ -36,21 +36,24 @@ class PianoWithRecording extends React.Component {
     }
   };
 
-  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {   
+  onStopNoteInput = (midiNumber, { prevActiveNotes }) => {
     if (this.state.notesRecorded === false) {
       this.setState({
         notesRecorded: true,
-        restStart: Date.now()/1000
+        restStart: Date.now() / 1000
       });
-      this.recordNotes(midiNumber, prevActiveNotes, Date.now()/1000-this.state.noteStart);
+      this.recordNotes(
+        midiNumber,
+        prevActiveNotes,
+        Date.now() / 1000 - this.state.noteStart
+      );
 
-      //console.log("onStop");
       global.startRest =true;
     }
   };
 
   recordNotes = (midiNumber, midiNumbers, duration) => {
-    if (this.props.recording.mode !== 'RECORDING') {
+    if (this.props.recording.mode !== "RECORDING") {
       return;
     }
     let count = 0;
@@ -75,14 +78,13 @@ class PianoWithRecording extends React.Component {
     });
   };
 
-  recordRests = (duration) => {
-    if (this.props.recording.mode !== 'RECORDING') {
+  recordRests = duration => {
+    if (this.props.recording.mode !== "RECORDING") {
       return;
     }
 
     //console.log("recording: " + global.notes);
     // console.log("recording\n");
-
     
         const newEvents = 
            [{
@@ -338,9 +340,6 @@ class PianoWithRecording extends React.Component {
     //this.forceUpdate();
   }
 
-
-
-
   render() {
     const {
       playNote,
@@ -353,7 +352,6 @@ class PianoWithRecording extends React.Component {
     const { mode, currentEvents } = this.props.recording;
     const activeNotes =
       mode === 'PLAYING' ? currentEvents.map(event => event.midiNumber) : null;
-      
     return (
       <div>
         <Piano
@@ -364,9 +362,7 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-      
-      
-
+        <DownloadButton />
       </div>
     );
   }
