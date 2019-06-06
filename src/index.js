@@ -50,7 +50,7 @@ state = {
       currentEvents: [],
     },
     firstNote: noteRange.first,
-    lastNote: noteRange.first + 11,
+    lastNote: noteRange.first + 12,
     paused: false,
     currentComposer: "Anonymous"
   };
@@ -64,7 +64,7 @@ state = {
    resetKeyboard = () =>{
     keyboardShortcuts = KeyboardShortcuts.create({
       firstNote: noteRange.first,
-      lastNote: noteRange.first + 11,
+      lastNote: noteRange.first + 12,
     
       keyboardConfig: KeyboardShortcuts.HOME_ROW,
     });
@@ -296,7 +296,6 @@ state = {
                         disabled={isLoading}
                         keyboardShortcuts={keyboardShortcuts}
                         pause={this.onClickPause}
-                        changeComposer={(composer) => this.changeComposer(composer)}
                         changeComposer={(composer) => this.changeComposer(composer)}
                         composerName={this.state.currentComposer}
                       />
