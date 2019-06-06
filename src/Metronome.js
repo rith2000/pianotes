@@ -115,7 +115,7 @@ class Metronome extends Component {
 	render() {
 		
 		return <div className = "metronome"> 
-			<div className ="bpm-slider">
+			<div className ="bpm-slider rightt">
 				<div>{this.state.bpm} BPM</div>
 				<input 
 					type = "range" 
@@ -124,7 +124,11 @@ class Metronome extends Component {
 					value={this.state.bpm}
 					onChange={this.handleBpmChange}/>
 			</div>
-			<button className= "btn" onClick={this.scheduler}>{this.state.isPlaying ? 'Stop Metronome' : 'Play Metronome'}</button>
+			
+				<button className= "btn1 leftt-metro" onClick={this.scheduler}>{this.state.isPlaying ? 'Stop Metronome' : 'Play Metronome'}</button>
+				
+
+			
 		</div>
 	}
 }

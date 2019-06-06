@@ -15,6 +15,7 @@ import DropDown from './DropDown.js';
 import Metronome from './Metronome.js';
 import './Metronome.css';
 
+
 import DownloadButton from "./PDFMaker/DownloadButton";
 
 //import MidiPlayer from './MidiPlayer';
@@ -278,6 +279,7 @@ class App extends React.Component {
                         stopNote={stopNote}
                         disabled={isLoading}
                         keyboardShortcuts={keyboardShortcuts}
+                        pause={this.onClickPause}
                       />
                     </center>
                   )}
@@ -289,12 +291,19 @@ class App extends React.Component {
 
           <center>
             <p> </p>
-            <div className = "mt-5">
-              <DownloadButton />
+                <br/>
+              <div id="strip-wrapper">
+                <DownloadButton/>
               <Metronome />
-            </div>
+                <div className="leftt">
+                  <img src={require("./arrows.png")} title="Arrow keys change octave"/>
+                </div>
 
-         <div className="mt-5">
+
+              </div>
+              
+
+         <div className="mt-0">
             
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
 
@@ -302,6 +311,7 @@ class App extends React.Component {
           <button className="btn" onClick={this.onClickPause}>{this.pauseButtonText()}</button>{" "}
 
          <DropDown pause={this.pause}></DropDown>
+         
          </div>
 
           </center>

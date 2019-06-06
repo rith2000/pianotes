@@ -7,8 +7,8 @@ import '../Metronome.css';
 class DownloadButton extends Component {
   render() {
     return (
-      <div>
-        <button className="btn" onClick={() => window.print()}>Download your file!</button>
+      <div className = "rightt-download">
+        <button className="btn1" onClick={() => window.print()}>Download</button>
       </div>
     );
   }
