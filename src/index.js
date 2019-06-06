@@ -133,9 +133,11 @@ state = {
 
 
   changeComposer = composer => {
-    this.setState({
+    if (composer !== ""){
+      this.setState({
       currentComposer: composer
     });
+    }
   }
 
   onClickPlay = () => {
