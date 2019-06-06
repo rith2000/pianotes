@@ -19,7 +19,9 @@ class PianoWithRecording extends React.Component {
     restStart: 0,
 
     clip_factor: 1.25,
+
     clip_rest: 1.0
+
 
   };
 
@@ -358,6 +360,22 @@ class PianoWithRecording extends React.Component {
 
 
 
+  handleChange(e) {
+    this.props.changeComposer(e.target.value);
+  }
+
+  disableInput() {
+    this.setState({
+      notesRecorded: false
+    });
+  }
+
+  enableInput() {
+    this.setState({
+      notesRecorded: true
+    });
+  }
+
   render() {
     const {
       playNote,
@@ -385,7 +403,6 @@ class PianoWithRecording extends React.Component {
           activeNotes={activeNotes}
           {...pianoProps}
         />
-
 
 
       </div>

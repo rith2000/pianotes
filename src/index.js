@@ -1,27 +1,22 @@
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import _ from 'lodash';
-import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
-import 'react-piano/dist/styles.css';
-import './global.js'
-import DimensionsProvider from './DimensionsProvider';
-import SoundfontProvider from './SoundfontProvider';
-import PianoWithRecording from './PianoWithRecording';
-import ScoreDisplay from './ScoreDisplay';
+import React from "react";
+import ReactDOM from "react-dom";
+import _ from "lodash";
+import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import "react-piano/dist/styles.css";
+import "./global.js";
+import DimensionsProvider from "./DimensionsProvider";
+import SoundfontProvider from "./SoundfontProvider";
+import PianoWithRecording from "./PianoWithRecording";
+import ScoreDisplay from "./ScoreDisplay";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import DropDown from './DropDown.js';
+import "bootstrap/dist/css/bootstrap.min.css";
+import DropDown from "./DropDown.js";
+
 import Metronome from './Metronome.js';
-import './Metronome.css';
-
+import "./Metronome.css";
 
 import DownloadButton from "./PDFMaker/DownloadButton";
-
-//import MidiPlayer from './MidiPlayer';
-
-
-
 // webkitAudioContext fallback needed to support Safari
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
@@ -44,30 +39,29 @@ let keyboardShortcuts = KeyboardShortcuts.create({
 
 });
 
+
 class App extends React.Component {
-  state = {
+
+state = {
     recording: {
       mode: "RECORDING",
       events: [],
       currentTime: 0,
-
       currentEvents: [],
-
     },
     firstNote: noteRange.first,
     lastNote: noteRange.first + 11,
-    paused: false
-
+    paused: false,
+    currentComposer: "Anonymous"
   };
 
-  constructor(props) {
+ constructor(props) {
     super(props);
-
     this.scheduledEvents = [];
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
- 
-  resetKeyboard = () =>{
+
+   resetKeyboard = () =>{
     keyboardShortcuts = KeyboardShortcuts.create({
       firstNote: noteRange.first,
       lastNote: noteRange.first + 11,
@@ -119,7 +113,7 @@ class App extends React.Component {
     }
   }
 
-  getRecordingEndTime = () => {
+ getRecordingEndTime = () => {
     if (this.state.recording.events.length === 0) {
       return 0;
     }
@@ -136,6 +130,13 @@ class App extends React.Component {
 
     });
   };
+
+
+  changeComposer = composer => {
+    this.setState({
+      currentComposer: composer
+    });
+  }
 
   onClickPlay = () => {
     //console.log("EVENTS: " + this.state.recording.events);
@@ -188,6 +189,7 @@ class App extends React.Component {
     this.setState({paused: false})
   };
 
+
   pause = () => {
     this.onClickStop();
     this.setRecording({
@@ -229,11 +231,26 @@ class App extends React.Component {
   }
 
 
+  handleChange(e) {
+    this.changeComposer(e.target.value);
+  }
+
+  disableInput() {
+    this.setRecording({
+      mode: "PLAYING"
+    });
+  }
+
+  enableInput() {
+    this.setRecording({
+      mode: "RECORDING"
+    });
+  }
+
+
   render() {
     return (
-      
       <div>
-
         <div className="hide">
           <p> </p>
           <h1 className="h3">
@@ -249,12 +266,11 @@ class App extends React.Component {
           <p>
             {" "}
             <center>
-
               {" "}
               <font face="garamond">
                 <font size="5">
                   {" "}
-                  A web-app that translates piano playing into sheet music.{" "}
+                  A web-app that translates piano playing into sheet music{" "}
                 </font>
               </font>{" "}
             </center>{" "}
@@ -280,6 +296,9 @@ class App extends React.Component {
                         disabled={isLoading}
                         keyboardShortcuts={keyboardShortcuts}
                         pause={this.onClickPause}
+                        changeComposer={(composer) => this.changeComposer(composer)}
+                        changeComposer={(composer) => this.changeComposer(composer)}
+                        composerName={this.state.currentComposer}
                       />
                     </center>
                   )}
@@ -288,22 +307,33 @@ class App extends React.Component {
             </DimensionsProvider>
           </div>
           <p> </p>
-
           <center>
-            <p> </p>
-                <br/>
+              <br/>
               <div id="strip-wrapper">
                 <DownloadButton/>
-              <Metronome />
-                <div className="leftt">
-                  <img src={require("./arrows.png")} title="Arrow keys change octave"/>
-                </div>
+                <Metronome />
+                  <div className="leftt">
+                    <img src={require("./arrows.png")} title="Arrow keys change octave"/>
+                    <p><b>Change Octave</b></p>
+                  </div>
 
 
               </div>
-              
+
+              <div className = "hide">
+              Composer:
+            <input
+                type="text"
+                onFocus={this.disableInput.bind(this)}
+                onBlur={this.enableInput.bind(this)}
+                placeholder="Enter your name here"
+                onChange={this.handleChange.bind(this)}
+                value={this.props.composerName}
+              />
+            </div>
 
          <div className="mt-0">
+
             
           <button className="btn" onClick={this.onClickPlay}>Play</button>{" "}
 
@@ -314,58 +344,28 @@ class App extends React.Component {
          
          </div>
 
-          </center>
+        </center>
 
 
         </div>
         <center>
           <div>
+           
             <div className="unhide">
               <br />
-              Your Pianotes Composition:
-            
+              {this.state.currentComposer}'s Pianotes Composition!
+              <br />
+             
             </div>
             <div className="mt-5" className='enlarge'>
               <ScoreDisplay />
             </div>
           </div>
         </center>
-
       </div>
-
-
     );
   }
 }
 
-/* exports.resetKeyboard = function() {
-    keyboardShortcuts = KeyboardShortcuts.create({
-      firstNote: noteRange.first,
-      lastNote: noteRange.first + 11,
-    
-      keyboardConfig: KeyboardShortcuts.HOME_ROW,
-    });
-  }
-
-exports.increaseOctave = function() {
-	firstNote = firstNote + 1;
-    lastNote = lastNote + 1;
-    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
-    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
-
-    this.resetKeyboard();
-};
-
-exports.decreaseOctave = function(){
-	firstNote = firstNote + 1;
-    lastNote = lastNote + 1;
-    noteRange.first = MidiNumbers.fromNote('c' + firstNote);
-    noteRange.last = MidiNumbers.fromNote('c' + lastNote);
-
-    this.resetKeyboard();
-}; */
-
-export default App;
-
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
