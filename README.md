@@ -6,3 +6,5 @@ We implemented code from the following two sources:
 https://www.npmjs.com/package/react-piano
 
 https://www.npmjs.com/package/react-abc
+
+Visit the fully implemented app at http://pianotes.io!
