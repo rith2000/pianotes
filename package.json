@@ -9,7 +9,7 @@
     "file-saver": "^2.0.1",
     "html2canvas": "^1.0.0-rc.1",
     "jspdf": "^1.5.3",
-    "lodash": "4.17.11",
+    "lodash": "4.17.21",
     "prop-types": "15.6.2",
     "react": "^16.8.4",
     "react-abc": "^0.4.0",
